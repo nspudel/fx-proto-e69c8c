@@ -1,0 +1,423 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>Port2Port CMS: Finance prototype v0.2</title>
+<style>
+  :root{--side:#2f353a;--side-act:#3a4248;--side-hover:#20a8d8;--bg:#f7f7f7;--ink:#23282c;--muted:#5c6873;--line:#c8ced3;--hdr:#ebeaea;
+        --gold:#b98754;--gold-btn:#96693b;--gold-text:#7d5a30;--green:#444f43;--slate:#5c6873;--maroon:#6e2433;--navy:#2f3a52;--focus:#20a8d8;
+        --ok:#4d7c4a;--warn:#c8902e;--bad:#a33b3b;--bad-card:#8a3b3b}
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{margin:0;font-family:-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;font-size:14px;line-height:1.5;color:var(--ink);background:var(--bg)}
+  :focus-visible{outline:2px solid var(--focus);outline-offset:2px}
+  .sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);border:0}
+  .proto{background:#fff6e5;border-bottom:1px solid #e8d3a8;font-size:12px;padding:6px 16px;color:#6b4f1c}
+  /* header, as CoreUI app-header */
+  .app-header{height:55px;background:#fff;border-bottom:1px solid var(--line);display:flex;align-items:center;padding:0 16px;gap:24px}
+  .brand{width:155px;height:55px;display:inline-flex;align-items:center;flex-shrink:0}
+  .brand img{height:30px;width:auto}
+  .brand .fallback{font-weight:800;font-size:22px;letter-spacing:-.5px}
+  .app-header .links a{color:var(--gold-text);font-size:12px;text-decoration:underline;display:inline-block;padding:5px 0;margin-right:16px}
+  .app-header .right{margin-left:auto;display:flex;align-items:center;gap:18px;font-size:12px;line-height:1.4}
+  .app-header .user{text-align:right}
+  .bell{position:relative;width:24px;height:24px;color:var(--muted)}
+  .bell b{position:absolute;top:-6px;right:-8px;background:var(--gold-btn);color:#fff;font-size:10px;border-radius:9px;padding:0 5px;font-weight:600}
+  .toggler{display:none;background:none;border:1px solid var(--line);border-radius:3px;width:38px;height:34px;align-items:center;justify-content:center;cursor:pointer;color:var(--ink)}
+  .toggler svg{width:18px;height:18px}
+  /* body */
+  .app-body{display:flex;min-height:calc(100vh - 55px - 50px)}
+  .sidebar{width:200px;background:var(--side);color:#fff;flex-shrink:0;display:flex;flex-direction:column}
+  .sidebar nav{flex:1}
+  .sidebar ul{list-style:none;margin:0;padding:0}
+  .sidebar a,.sidebar button.navlink{display:flex;align-items:center;gap:8px;width:100%;text-align:left;padding:12px 16px;color:#fff;text-decoration:none;cursor:pointer;background:transparent;border:0;font:inherit;line-height:1.3}
+  .sidebar a:hover,.sidebar button.navlink:hover{background:var(--side-hover)}
+  .sidebar .act{background:var(--side-act)}
+  .sidebar .new{border-left:3px solid var(--gold);padding-left:13px}
+  .sidebar svg.ic{width:15px;height:15px;color:#73818f;flex-shrink:0}
+  .sidebar .act svg.ic,.sidebar a:hover svg.ic,.sidebar button.navlink:hover svg.ic{color:#fff}
+  .sidebar .chev{margin-left:auto;color:#73818f;font-size:12px}
+  .sidebar .nav-title{padding:12px 16px 6px;font-size:11px;font-weight:700;text-transform:uppercase;color:#e4e7ea;letter-spacing:.04em;display:flex;align-items:center;gap:8px}
+  .sidebar .tag{font-size:10px;background:var(--gold-btn);color:#fff;border-radius:8px;padding:1px 7px;font-weight:600;text-transform:none;letter-spacing:0}
+  .sidebar-minimizer{height:50px;background:rgba(0,0,0,.2);display:flex;align-items:center;padding:0 16px;color:#73818f;font-size:18px}
+  main{flex:1;min-width:0;padding:0 24px 32px}
+  .crumb{background:#fff;margin:0 -24px 24px;padding:12px 24px;border-bottom:1px solid var(--line);font-size:13px}
+  .crumb a{color:var(--gold-text)}
+  .crumb span{color:var(--muted);padding:0 6px}
+  .card{background:#fff;border-radius:4px;margin-bottom:20px;border:1px solid var(--line);min-width:0}
+  .card-h{background:var(--hdr);padding:12px 20px;display:flex;align-items:center;gap:12px;flex-wrap:wrap;border-radius:3px 3px 0 0;border-bottom:1px solid var(--line)}
+  .card-h h1,.card-h h2{margin:0;font-size:14px;font-weight:600;line-height:1.5}
+  .card-h .meta{margin-left:auto;font-size:12px;color:var(--muted)}
+  .card-b{padding:20px}
+  .btn{display:inline-flex;align-items:center;justify-content:center;border:1px solid transparent;border-radius:3px;padding:6px 12px;font-size:14px;line-height:1.5;cursor:pointer;color:#fff;font-family:inherit;white-space:nowrap;min-height:35px}
+  .btn-sm{padding:4px 10px;font-size:12px;min-height:27px}
+  .b-gold{background:var(--gold-btn);border-color:var(--gold-btn)}.b-gold:hover{background:#7d5a30}
+  .b-out{background:#fff;color:var(--ink);border-color:var(--line)}.b-out:hover{background:#f0f3f5}
+  .btn[disabled],.btn[aria-disabled=true]{opacity:.5;cursor:not-allowed}
+  .link-btn{background:none;border:0;padding:3px 0;font:inherit;font-size:12px;color:var(--gold-text);text-decoration:underline;cursor:pointer;min-height:24px;font-family:inherit}
+  .link-btn:hover{color:#5c421f}
+  select{border:1px solid var(--line);border-radius:3px;padding:6px 28px 6px 10px;font-size:13px;background:#fff;color:var(--ink);min-height:35px;font-family:inherit}
+  .pill{display:inline-block;padding:3px 8px;font-size:11px;line-height:1.3;border-radius:2px;color:#fff;text-transform:uppercase;letter-spacing:.03em;font-weight:600;white-space:nowrap}
+  .p-open{background:#a9d4ea;color:#23465a}.p-closed{background:var(--green)}.p-final{background:var(--maroon)}.p-prov{background:#f1e3c4;color:#6b4f1c}
+  .row{display:flex;gap:20px;flex-wrap:wrap}
+  .kpi{flex:1 1 170px;min-width:0;border-radius:4px;color:#fff;padding:18px 20px;background:var(--slate)}
+  .kpi.dark{background:var(--green)}.kpi.good{background:var(--ok)}.kpi.bad{background:var(--bad-card)}
+  .kpi b{font-size:20px;display:block;line-height:1.2;font-variant-numeric:tabular-nums}
+  .kpi span.l{display:block;margin-top:2px}
+  .kpi small{display:block;margin-top:6px;font-size:12px;opacity:.95}
+  .bar{height:6px;background:rgba(255,255,255,.3);border-radius:3px;margin-top:10px}
+  .bar div{height:6px;background:#fff;border-radius:3px}
+  .tbl{overflow-x:auto;-webkit-overflow-scrolling:touch}
+  table{width:100%;border-collapse:collapse;min-width:520px}
+  table.compact{min-width:0}
+  th{font-weight:600;text-align:left;padding:10px;border-bottom:2px solid var(--line);font-size:13px;white-space:nowrap}
+  td{padding:10px;border-bottom:1px solid #e9ecef;font-size:13px}
+  td.n,th.n{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}
+  tr.total td{font-weight:600;border-top:2px solid var(--line)}
+  .neg{color:var(--bad)}.pos{color:var(--ok)}
+  /* run status */
+  .steps{display:flex;margin:6px 0 4px}
+  .step{flex:1;text-align:center;position:relative;font-size:12px;padding:30px 4px 0;min-width:0}
+  .step:before{content:"";position:absolute;top:10px;left:0;right:0;height:3px;background:#dde2e6}
+  .step:first-child:before{left:50%}.step:last-child:before{right:50%}
+  .step i{position:absolute;top:0;left:calc(50% - 11px);width:22px;height:22px;border-radius:50%;background:#dde2e6;font-style:normal;color:#fff;font-size:11px;line-height:22px;z-index:1;font-weight:600}
+  .step.done:before,.step.done i{background:var(--green)}
+  .step.now i{background:var(--gold-btn);box-shadow:0 0 0 3px #f1e3c4}
+  .step em{display:block;font-style:normal;color:var(--muted);font-size:11px;margin-top:2px}
+  /* exceptions */
+  .exc{display:flex;gap:10px;align-items:center;padding:10px 12px;border-left:3px solid var(--warn);background:#fbf7ef;margin-bottom:8px;border-radius:0 3px 3px 0}
+  .exc.okk{border-color:var(--ok);background:#f1f6f0}
+  .exc .t{flex:1}
+  .exc svg{width:16px;height:16px;flex-shrink:0;color:var(--warn)}
+  .exc.okk svg{color:var(--ok)}
+  .lock{display:flex;gap:10px;align-items:center;background:#fff;border:1px solid var(--line);border-left:3px solid var(--maroon);color:var(--ink);padding:10px 14px;border-radius:3px;font-size:13px;margin-bottom:16px}
+  .lock svg{width:16px;height:16px;color:var(--maroon);flex-shrink:0}
+  .tabs{display:flex;border-bottom:1px solid var(--line);margin-bottom:16px}
+  .tabs a,.tabs button{padding:10px 18px;cursor:pointer;color:var(--muted);background:none;border:1px solid transparent;border-bottom:0;font:inherit;text-decoration:none;font-family:inherit}
+  .tabs .on{border-color:var(--line);border-bottom-color:#fff;background:#fff;margin-bottom:-1px;border-radius:3px 3px 0 0;color:var(--ink);font-weight:600}
+  .toggle{display:inline-flex;border:1px solid var(--line);border-radius:3px;overflow:hidden}
+  .toggle button{padding:6px 12px;font-size:12px;cursor:pointer;background:#fff;border:0;color:var(--ink);font-family:inherit;white-space:nowrap;min-height:33px}
+  .toggle button[aria-pressed=true]{background:var(--navy);color:#fff}
+  .months{display:grid;grid-template-columns:repeat(6,1fr);gap:6px}
+  .months div{text-align:center;font-size:11px;line-height:1.3;padding:8px 2px;border-radius:3px;background:#f0f0f0}
+  .months .f{background:var(--maroon);color:#fff}.months .c{background:var(--green);color:#fff}.months .o{background:#a9d4ea;color:#23465a}
+  .legend{font-size:12px;color:var(--muted);margin-top:8px}
+  .legend i{display:inline-block;width:10px;height:10px;margin-right:4px;vertical-align:-1px}
+  tr.dept{cursor:pointer;font-weight:600}
+  tr.dept td:first-child button{background:none;border:0;font:inherit;font-weight:600;color:var(--ink);cursor:pointer;padding:0;display:inline-flex;align-items:center;gap:6px;font-family:inherit;min-height:24px}
+  tr.dept td:first-child button svg{width:12px;height:12px;transition:transform .15s}
+  tr.dept td:first-child button[aria-expanded=true] svg{transform:rotate(90deg)}
+  tr.acct td{background:#fafafa;color:var(--muted)}
+  tr.acct td:first-child{padding-left:30px}
+  .note{font-size:12px;color:var(--muted);margin-top:8px}
+  .spread-flag{font-size:11px;color:var(--gold-text);margin-left:6px;white-space:nowrap}
+  .modal{position:fixed;inset:0;background:rgba(0,0,0,.45);display:none;align-items:center;justify-content:center;padding:16px;z-index:1050}
+  .modal.on{display:flex}
+  .modal .card{width:520px;max-width:100%;margin:0}
+  .modal textarea{width:100%;min-height:70px;border:1px solid var(--line);border-radius:3px;padding:8px;font:inherit;font-family:inherit;margin-top:4px}
+  .modal label{font-size:13px;font-weight:600}
+  .modal .actions{display:flex;gap:10px;justify-content:flex-end;margin-top:16px;flex-wrap:wrap}
+  .view{display:none}.view.on{display:block}
+  .app-footer{height:50px;background:var(--bg);border-top:1px solid var(--line);display:flex;align-items:center;justify-content:flex-end;padding:0 16px;font-size:12px;color:var(--muted)}
+  .app-footer a{color:var(--gold-text)}
+  /* responsive, as CoreUI: sidebar becomes a drawer under 992px */
+  @media (max-width:991.98px){
+    .toggler{display:inline-flex}
+    .app-header .links{display:none}
+    .app-body{position:relative}
+    .sidebar{position:fixed;top:0;left:-200px;height:100vh;z-index:1040;transition:left .2s}
+    body.sidebar-show .sidebar{left:0}
+    body.sidebar-show .backdrop{display:block}
+    .backdrop{display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:1030}
+    main{padding:0 16px 24px}
+    .crumb{margin:0 -16px 16px;padding:10px 16px}
+  }
+  @media (max-width:575.98px){
+    .app-header .user{display:none}
+    .card-b{padding:14px}
+    .card-h{padding:10px 14px}
+    .steps{flex-direction:column;gap:10px}
+    .step{text-align:left;padding:0 0 0 32px}
+    .step:before{display:none}
+    .step i{left:0;top:0}
+    .months{grid-template-columns:repeat(4,1fr)}
+    .kpi b{font-size:18px}
+  }
+</style>
+</head>
+<body>
+<aside class="proto" role="note" aria-label="Prototype notice">PROTOTYPE v0.2 (10 Oct 2026). Dummy figures only. Not connected to the CMS, Xero or bank data.</aside>
+
+<header class="app-header">
+  <button class="toggler" type="button" aria-label="Open menu" aria-controls="sidebar" aria-expanded="false" onclick="toggleSide()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg></button>
+  <a class="brand" href="#" aria-label="Port2Port CMS home"><img src="https://admin.port2port.wine/assets/img/brand/p2p-full-toned.png" alt="Port2Port" onerror="this.outerHTML='<span class=fallback>Port2Port</span>'"></a>
+  <div class="links"><a href="#">Submit A Product</a><a href="#">User Guides</a></div>
+  <div class="right">
+    <span class="bell" aria-label="12 notifications" role="img"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg><b>12</b></span>
+    <div class="user">Nic Pudel<br>nsp@pier2pier.co.za</div>
+  </div>
+</header>
+
+<div class="app-body">
+<div class="backdrop" onclick="toggleSide(false)"></div>
+<div class="sidebar" id="sidebar">
+  <nav aria-label="Main">
+  <ul>
+    <li><a href="#"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>Dashboard</a></li>
+    <li><a href="#"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>Orders</a></li>
+    <li><a href="#"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>Shipments</a></li>
+    <li><a href="#"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>Carts</a></li>
+    <li><a href="#"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z"/></svg>Catalogue<span class="chev" aria-hidden="true">&#8250;</span></a></li>
+    <li><a href="#"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/></svg>Vouchers</a></li>
+    <li><a href="#"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>Articles<span class="chev" aria-hidden="true">&#8250;</span></a></li>
+    <li><a href="#"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>Reports</a></li>
+    <li class="nav-title">Finance <span class="tag">new</span></li>
+    <li><button class="navlink new act" type="button" data-v="close" aria-current="page"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/><polyline points="9 16 11 18 15 14"/></svg>Month Close</button></li>
+    <li><button class="navlink new" type="button" data-v="fin"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21.21 15.89A10 10 0 1 1 8 2.83"/><path d="M22 12A10 10 0 0 0 12 2v10z"/></svg>Financials<svg class="ic" style="margin-left:auto" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-label="restricted" role="img"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></button></li>
+    <li><a href="#"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/></svg>Shops<span class="chev" aria-hidden="true">&#8250;</span></a></li>
+    <li><a href="#"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="3" width="15" height="13"/><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg>Vendors</a></li>
+    <li><a href="#"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 4h8a4 4 0 0 1 4 4 4 4 0 0 1-4 4H6z"/><path d="M6 12h9a4 4 0 0 1 4 4 4 4 0 0 1-4 4H6z"/></svg>Brands</a></li>
+    <li><a href="#"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>Accounts</a></li>
+    <li><a href="#"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>Users</a></li>
+    <li><a href="#"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="21" x2="4" y2="14"/><line x1="4" y1="10" x2="4" y2="3"/><line x1="12" y1="21" x2="12" y2="12"/><line x1="12" y1="8" x2="12" y2="3"/><line x1="20" y1="21" x2="20" y2="16"/><line x1="20" y1="12" x2="20" y2="3"/><line x1="1" y1="14" x2="7" y2="14"/><line x1="9" y1="8" x2="15" y2="8"/><line x1="17" y1="16" x2="23" y2="16"/></svg>Settings<span class="chev" aria-hidden="true">&#8250;</span></a></li>
+  </ul>
+  </nav>
+  <div class="sidebar-minimizer" aria-hidden="true">&#8249;</div>
+</div>
+
+<main id="main">
+
+<!-- ============ REEVA: MONTH CLOSE ============ -->
+<section class="view on" id="v-close" aria-labelledby="h-close">
+  <nav class="crumb" aria-label="Breadcrumb"><a href="#">Home</a><span>/</span>Finance<span>/</span>Month Close</nav>
+
+  <div class="card">
+    <div class="card-h">
+      <h1 id="h-close">Month Close</h1>
+      <label class="sr-only" for="mSel">Month</label>
+      <select id="mSel" onchange="pickMonth(this.value)"><option>October 2026</option><option selected>September 2026</option><option>August 2026</option></select>
+      <span class="pill p-open" id="closeState">Open</span>
+      <span class="meta">Who closes: Reeva. The run starts automatically after the close.</span>
+    </div>
+    <div class="card-b">
+      <div class="row">
+        <div style="flex:1.4 1 300px;min-width:0">
+          <h2 style="font-size:14px;margin:0 0 10px">Before you close (all items must be clear)</h2>
+          <div class="exc" id="e1" role="group" aria-label="Open item 1"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg><span class="t"><b>3 orders</b> still on Payment Pending or Processing</span><button class="link-btn" type="button" onclick="fix('e1')">Review orders &rarr;</button></div>
+          <div class="exc" id="e2" role="group" aria-label="Open item 2"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg><span class="t"><b>5 shipments</b> with vendor share of R1,500 or more and no courier cost entered</span><button class="link-btn" type="button" onclick="fix('e2')">Enter costs &rarr;</button></div>
+          <div class="exc okk"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg><span class="t">All EFT payments captured (412 orders)</span></div>
+          <div class="exc okk"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg><span class="t">Vendor bank details verified for 46 of 46 vendors with sales</span></div>
+          <p class="note" style="margin:4px 0 12px">Checked 10 Oct 2026, 10:42. <button class="link-btn" type="button" onclick="recheck()">Check again</button></p>
+          <div style="display:flex;gap:12px;align-items:center;flex-wrap:wrap">
+            <button class="btn b-gold" id="closeBtn" type="button" aria-disabled="true" aria-describedby="closeHint" onclick="openModal('modal')">Close September 2026</button>
+            <span class="note" id="closeHint" style="margin:0" aria-live="polite">Clear the 2 open items above to enable the close.</span>
+          </div>
+        </div>
+        <div style="flex:1 1 240px;min-width:0">
+          <h2 style="font-size:14px;margin:0 0 10px">Month at a glance</h2>
+          <table class="compact">
+            <tbody>
+            <tr><td>Orders (paid)</td><td class="n">412</td></tr>
+            <tr><td>GMV (incl VAT)</td><td class="n">R 2,180,450.00</td></tr>
+            <tr><td>Vendors with sales</td><td class="n">46</td></tr>
+            <tr><td>Commission (excl VAT)</td><td class="n">R 402,310.00</td></tr>
+            <tr><td>Estimated payout total</td><td class="n">R 1,640,220.00</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-h"><h2>Run status</h2><span class="meta">August 2026 (closed 3 Sep)</span></div>
+    <div class="card-b">
+      <ol class="steps" style="padding:0;list-style:none">
+        <li class="step done"><i aria-hidden="true">&#10003;</i>Month closed<em>Reeva, 3 Sep 09:14</em></li>
+        <li class="step done"><i aria-hidden="true">&#10003;</i>Feed checked<em>0 mismatches</em></li>
+        <li class="step done"><i aria-hidden="true">&#10003;</i>Xero invoices drafted<em>44 drafts</em></li>
+        <li class="step done"><i aria-hidden="true">&#10003;</i>Payout file ready<em>44 payments, R 1,548,010</em></li>
+        <li class="step now" aria-current="step"><i aria-hidden="true">5</i>Nic authorises on FNB<em>waiting since 4 Sep</em></li>
+        <li class="step"><i aria-hidden="true">6</i>Paid<em>failed payments: none yet</em></li>
+      </ol>
+      <p class="note">Hermes prepares, people approve. Invoices stay drafts in Xero and payments are released only by Nic on FNB.</p>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-h"><h2>KPIs by month</h2><span class="meta">KPI list is configurable; set to be agreed with Reeva</span></div>
+    <div class="card-b">
+      <div class="row" style="margin-bottom:20px">
+        <div class="kpi dark"><b>R 2,180,450</b><span class="l">GMV</span><small>&#9650; 6% on Aug</small></div>
+        <div class="kpi"><b>412</b><span class="l">Orders</span><small>&#9650; 18 on Aug</small></div>
+        <div class="kpi"><b>46</b><span class="l">Vendors paid</span><small>Aug: 44</small></div>
+        <div class="kpi"><b>R 402,310</b><span class="l">Commission</span><small>18.5% of products</small></div>
+        <div class="kpi"><b>8</b><span class="l">Exceptions</span><small>Aug: 3</small></div>
+      </div>
+      <div class="tbl">
+      <table>
+        <thead><tr><th scope="col">Month</th><th scope="col">Status</th><th scope="col" class="n">GMV (R)</th><th scope="col" class="n">Orders</th><th scope="col" class="n">Commission (R)</th><th scope="col" class="n">Payout (R)</th><th scope="col">Closed by</th><th scope="col"><span class="sr-only">Actions</span></th></tr></thead>
+        <tbody>
+        <tr><td>Sep 2026</td><td><span class="pill p-open">Open</span></td><td class="n">2,180,450</td><td class="n">412</td><td class="n">402,310</td><td class="n">1,640,220</td><td>&nbsp;</td><td></td></tr>
+        <tr><td>Aug 2026</td><td><span class="pill p-closed">Closed</span></td><td class="n">2,054,300</td><td class="n">394</td><td class="n">379,860</td><td class="n">1,548,010</td><td>Reeva, 3 Sep</td><td><button class="btn btn-sm b-out" type="button" onclick="openModal('reopen')">Reopen&hellip;</button></td></tr>
+        <tr><td>Jul 2026</td><td><span class="pill p-final">Books final</span></td><td class="n">1,912,780</td><td class="n">371</td><td class="n">350,120</td><td class="n">1,441,560</td><td>Reeva, 4 Aug</td><td></td></tr>
+        </tbody>
+      </table>
+      </div>
+      <p class="note">Books final: Xero reconciled, cannot be reopened here.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ============ AMBER: FINANCIALS ============ -->
+<section class="view" id="v-fin" aria-labelledby="h-fin">
+  <nav class="crumb" aria-label="Breadcrumb"><a href="#">Home</a><span>/</span>Sales Assistant<span>/</span>Financials</nav>
+  <div class="tabs" role="tablist"><a href="#" role="tab" aria-selected="false">Aiko</a><a href="#" class="on" role="tab" aria-selected="true">Financials</a></div>
+  <div class="lock"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg><span>Restricted to Amber Pretorius and Nic Pudel. Checked on the server; every view is logged.</span></div>
+
+  <div class="card">
+    <div class="card-h">
+      <h1 id="h-fin">FY27 actual against budget</h1>
+      <label class="sr-only" for="fSel">Month</label>
+      <select id="fSel"><option selected>September 2026</option><option>August 2026</option><option>July 2026</option></select>
+      <div class="toggle" id="per" role="group" aria-label="Period"><button type="button" data-p="m" aria-pressed="true">Month</button><button type="button" data-p="y" aria-pressed="false">Year to date</button></div>
+      <div class="toggle" id="spr" role="group" aria-label="View"><button type="button" data-s="b" aria-pressed="true">As booked</button><button type="button" data-s="s" aria-pressed="false">Spread</button></div>
+      <span class="pill p-prov" style="margin-left:auto">Provisional: books not final</span>
+    </div>
+    <div class="card-b">
+      <div class="row" id="kpis"></div>
+      <p class="note" id="sprNote"></p>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="card" style="flex:2 1 320px">
+      <div class="card-h"><h2>Trading income by month: actual against budget</h2></div>
+      <div class="card-b"><svg id="chart" width="100%" height="260" viewBox="0 0 720 260" role="img" aria-label="Bar chart of trading income by month, actual against budget, March 2026 to February 2027, in thousands of rand"></svg>
+        <p class="legend"><i style="background:var(--green)"></i>Actual &nbsp;&nbsp; <i style="background:#d9d9d9"></i>Budget &nbsp;&nbsp; R thousand, excl VAT</p></div>
+    </div>
+    <div class="card" style="flex:1 1 240px">
+      <div class="card-h"><h2>Month status</h2></div>
+      <div class="card-b">
+        <div class="months" id="months"></div>
+        <p class="note" style="margin-top:14px;line-height:2.2"><span class="pill p-final">Books final</span> Xero reconciled<br><span class="pill p-closed">Closed</span> Closed in CMS, books open<br><span class="pill p-open">Open</span> Month still trading</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-h"><h2>Expenses against budget</h2><span class="meta">Select a department to see its accounts</span></div>
+    <div class="card-b"><div class="tbl"><table id="exp"></table></div>
+      <p class="note">Variance: positive is under budget, red is over. Xero accounts with no budget line are shown as "Unbudgeted", never dropped.</p></div>
+  </div>
+</section>
+
+</main>
+</div>
+<footer class="app-footer">Powered by <a href="#" style="margin-left:4px">Port2Port 2.1</a></footer>
+
+<!-- close confirmation -->
+<div class="modal" id="modal" role="dialog" aria-modal="true" aria-labelledby="mTitle" aria-describedby="mDesc"><div class="card">
+  <div class="card-h"><h2 id="mTitle">Close September 2026?</h2></div>
+  <div class="card-b">
+    <p id="mDesc" style="margin-top:0">This locks September sales and starts the run: feed check, Xero draft invoices, payout file. Nic is then asked to authorise payment on FNB. Reopening later needs a reason and is logged.</p>
+    <table class="compact"><tbody><tr><td>Orders</td><td class="n">412</td></tr><tr><td>GMV (incl VAT)</td><td class="n">R 2,180,450.00</td></tr><tr><td>Vendors to pay</td><td class="n">46</td></tr><tr><td>Estimated payout total</td><td class="n">R 1,640,220.00</td></tr></tbody></table>
+    <p class="note">Recorded as: Reeva, 10 Oct 2026, 10:42.</p>
+    <div class="actions"><button class="btn b-out" type="button" onclick="closeModal('modal')">Cancel</button><button class="btn b-gold" type="button" onclick="confirmClose()">Confirm close</button></div>
+  </div></div></div>
+
+<!-- reopen -->
+<div class="modal" id="reopen" role="dialog" aria-modal="true" aria-labelledby="rTitle"><div class="card">
+  <div class="card-h"><h2 id="rTitle">Reopen August 2026?</h2></div>
+  <div class="card-b">
+    <p style="margin-top:0">August is closed and its figures were sent to Xero (44 draft invoices) and to the payout file. Hermes flags every figure that changes after reopening. A reason is required and is logged with your name.</p>
+    <label for="rReason">Reason for reopening</label>
+    <textarea id="rReason" placeholder="For example: late EFT captured for order KL78621" aria-required="true"></textarea>
+    <p class="note" id="rErr" role="alert" style="color:var(--bad);display:none">Please give a reason.</p>
+    <div class="actions"><button class="btn b-out" type="button" onclick="closeModal('reopen')">Cancel</button><button class="btn b-gold" type="button" onclick="confirmReopen()">Reopen August</button></div>
+  </div></div></div>
+
+<script>
+// sidebar drawer (narrow screens)
+function toggleSide(force){const on=force===undefined?!document.body.classList.contains('sidebar-show'):force;
+  document.body.classList.toggle('sidebar-show',on);document.querySelector('.toggler').setAttribute('aria-expanded',on);}
+// navigation between the two prototype pages
+document.querySelectorAll('.sidebar button[data-v]').forEach(b=>b.onclick=()=>{
+  document.querySelectorAll('.sidebar .act').forEach(x=>{x.classList.remove('act');x.removeAttribute('aria-current')});
+  b.classList.add('act');b.setAttribute('aria-current','page');
+  document.querySelectorAll('.view').forEach(v=>v.classList.remove('on'));
+  const v=document.getElementById('v-'+b.dataset.v);v.classList.add('on');toggleSide(false);
+  v.querySelector('h1').setAttribute('tabindex','-1');v.querySelector('h1').focus();});
+document.querySelectorAll('a[href="#"]').forEach(a=>a.addEventListener('click',e=>e.preventDefault()));
+
+// month close
+let open=2,lastFocus=null;
+function fix(id){const e=document.getElementById(id);e.classList.add('okk');e.querySelector('button').remove();
+  e.querySelector('svg').innerHTML='<polyline points="20 6 9 17 4 12"/>';e.querySelector('.t').innerHTML+=' : resolved';open--;setHint();}
+function setHint(){const b=document.getElementById('closeBtn'),h=document.getElementById('closeHint');
+  if(open===0){b.setAttribute('aria-disabled','false');h.textContent='All checks clear. Closing asks you to confirm first.';}
+  else h.textContent='Clear the '+open+' open item'+(open>1?'s':'')+' above to enable the close.';}
+function recheck(){document.querySelector('#v-close .note').firstChild.textContent='Checked '+new Date().toLocaleString('en-GB',{day:'numeric',month:'short',year:'numeric',hour:'2-digit',minute:'2-digit'})+'. ';}
+function pickMonth(m){document.getElementById('closeBtn').textContent='Close '+m;document.getElementById('mTitle').textContent='Close '+m+'?';}
+function openModal(id){const b=document.activeElement;if(b&&b.getAttribute('aria-disabled')==='true')return;lastFocus=b;
+  const m=document.getElementById(id);m.classList.add('on');m.querySelector('.b-out').focus();}
+function closeModal(id){document.getElementById(id).classList.remove('on');if(lastFocus)lastFocus.focus();}
+document.addEventListener('keydown',e=>{if(e.key==='Escape')document.querySelectorAll('.modal.on').forEach(m=>closeModal(m.id));});
+function confirmClose(){closeModal('modal');const s=document.getElementById('closeState');s.className='pill p-closed';s.textContent='Closed';
+  const b=document.getElementById('closeBtn');b.setAttribute('aria-disabled','true');b.textContent='Closed by Reeva, 10 Oct 10:43';
+  document.getElementById('closeHint').textContent='Run started. Progress appears under Run status.';}
+function confirmReopen(){const r=document.getElementById('rReason');if(!r.value.trim()){document.getElementById('rErr').style.display='block';r.focus();return;}
+  closeModal('reopen');alert('Prototype: August would now be reopened with the reason logged, and the run status would show "Reopened".');}
+
+// financials (dummy)
+const R=n=>(n<0?'(R ':'R ')+Math.abs(Math.round(n)).toLocaleString('en-ZA').replace(/\u00a0/g,',')+(n<0?')':'');
+const data={
+ m:{b:[['GMV (memo)',2210000,2353115,1],['MP commissions',412000,460623,1],['Total trading income',498000,540000,1],['Gross profit',286000,316000,1],['Net profit',-41000,119800,1]],
+    s:[['GMV (memo)',2210000,2353115,1],['MP commissions',412000,460623,1],['Total trading income',498000,540000,1],['Gross profit',286000,316000,1],['Net profit',42000,119800,1]]},
+ y:{b:[['GMV (memo)',11950000,12600000,1],['MP commissions',2080000,2210000,1],['Total trading income',2905000,3060000,1],['Gross profit',1690000,1790000,1],['Net profit',-118000,96000,1]],
+    s:[['GMV (memo)',11950000,12600000,1],['MP commissions',2080000,2210000,1],['Total trading income',2905000,3060000,1],['Gross profit',1690000,1790000,1],['Net profit',-131000,96000,1]]}};
+let per='m',spr='b';
+function kpis(){const k=document.getElementById('kpis');k.innerHTML='';
+  data[per][spr].forEach((r,i)=>{const pct=r[2]?r[1]/r[2]:0,v=r[1]-r[2],cls=i===0?'dark':(i===4?(v<0?'bad':'good'):'');
+    k.innerHTML+=`<div class="kpi ${cls}"><b>${R(r[1])}</b><span class="l">${r[0]}</span><small>Budget ${R(r[2])}<br>${v<0?'&#9660; '+R(-v)+' below budget':'&#9650; '+R(v)+' above budget'}</small><div class="bar" aria-hidden="true"><div style="width:${Math.max(0,Math.min(100,pct*100))}%"></div></div></div>`});
+  document.getElementById('sprNote').innerHTML=spr==='s'
+   ?'Spread view: one-off payments are moved to the months they belong to (for example a bulk developer payment allocated to its invoice months, or an annual commission spread over 12 months). Xero itself is not changed.'
+   :'As booked: exactly as recorded in Xero. Switch to Spread to smooth one-off payments.';}
+document.querySelectorAll('#per button').forEach(a=>a.onclick=()=>{document.querySelectorAll('#per button').forEach(x=>x.setAttribute('aria-pressed','false'));a.setAttribute('aria-pressed','true');per=a.dataset.p;kpis();});
+document.querySelectorAll('#spr button').forEach(a=>a.onclick=()=>{document.querySelectorAll('#spr button').forEach(x=>x.setAttribute('aria-pressed','false'));a.setAttribute('aria-pressed','true');spr=a.dataset.s;kpis();});
+kpis();
+
+// chart
+const M=['Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec','Jan','Feb'];
+const bud=[450,470,480,500,510,520,540,560,620,700,500,500],act=[430,455,500,470,520,510,498];
+const svg=document.getElementById('chart');let s='';const H=220,mx=750;
+[0,250,500,750].forEach(v=>{const y=H-v/mx*200;s+=`<line x1="40" x2="715" y1="${y}" y2="${y}" stroke="#e9ecef"/><text x="34" y="${y+4}" font-size="10" text-anchor="end" fill="#5c6873">R${v}k</text>`});
+M.forEach((m,i)=>{const x=50+i*55;s+=`<rect x="${x}" y="${H-bud[i]/mx*200}" width="20" height="${bud[i]/mx*200}" fill="#d9d9d9"><title>${m} budget R${bud[i]}k</title></rect>`;
+  if(act[i]!=null)s+=`<rect x="${x+22}" y="${H-act[i]/mx*200}" width="20" height="${act[i]/mx*200}" fill="#444f43"><title>${m} actual R${act[i]}k</title></rect>`;
+  s+=`<text x="${x+21}" y="${H+16}" font-size="11" text-anchor="middle" fill="#23282c">${m}</text>`});
+svg.innerHTML=s;
+
+// month status
+const st=['f','f','f','f','f','c','o','o','','','',''],lab={f:'Final',c:'Closed',o:'Open','':'Future'};
+document.getElementById('months').innerHTML=M.map((m,i)=>`<div class="${st[i]}">${m}<br>${lab[st[i]]}</div>`).join('');
+
+// expenses
+const exp=[['Payroll',148000,152000,[['Salaries',132000,136000],['UIF / SDL',16000,16000]]],
+ ['Technology & IT',131000,58000,[['Subcontractors - Developer',118000,45000,1],['Hosting & software',13000,13000]]],
+ ['Marketing',61000,70000,[['Digital advertising',38000,45000],['Events',23000,25000]]],
+ ['Professional Services',14500,9000,[['Accounting fees',7300,7300],['Legal',7200,1700]]],
+ ['General & Administrative',42000,40000,[['Rent',22000,22000],['Bank & merchant fees',20000,18000]]],
+ ['Unbudgeted',3200,0,[['Sundry (no budget line)',3200,0]]]];
+let html='<thead><tr><th scope="col">Department / account</th><th scope="col" class="n">Actual</th><th scope="col" class="n">Budget</th><th scope="col" class="n">Variance</th><th scope="col" class="n">% of budget</th></tr></thead><tbody>';
+let ta=0,tb=0;
+exp.forEach((d,i)=>{const v=d[2]-d[1];ta+=d[1];tb+=d[2];const pc=d[2]?Math.round(d[1]/d[2]*100)+'%':'n/a';
+ html+=`<tr class="dept"><td><button type="button" aria-expanded="false" aria-controls="dept${i}" onclick="toggleDept(this,${i})"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="9 18 15 12 9 6"/></svg>${d[0]}</button></td><td class="n">${R(d[1])}</td><td class="n">${d[2]?R(d[2]):'none'}</td><td class="n ${v<0?'neg':'pos'}">${R(v)}</td><td class="n">${pc}</td></tr>`;
+ d[3].forEach(a=>{const va=a[2]-a[1];html+=`<tr class="acct a${i}" id="dept${i}" hidden><td>${a[0]}${a[3]?'<span class="spread-flag">one-off, see Spread</span>':''}</td><td class="n">${R(a[1])}</td><td class="n">${a[2]?R(a[2]):'none'}</td><td class="n ${va<0?'neg':'pos'}">${R(va)}</td><td class="n">${a[2]?Math.round(a[1]/a[2]*100)+'%':'n/a'}</td></tr>`})});
+html+=`<tr class="total"><td>Total operating expenses</td><td class="n">${R(ta)}</td><td class="n">${R(tb)}</td><td class="n ${tb-ta<0?'neg':'pos'}">${R(tb-ta)}</td><td class="n">${Math.round(ta/tb*100)}%</td></tr></tbody>`;
+document.getElementById('exp').innerHTML=html;
+function toggleDept(b,i){const on=b.getAttribute('aria-expanded')!=='true';b.setAttribute('aria-expanded',on);document.querySelectorAll('.a'+i).forEach(r=>r.hidden=!on);}
+</script>
+</body>
+</html>
