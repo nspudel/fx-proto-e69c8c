@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="robots" content="noindex, nofollow">
-<title>Port2Port CMS: Finance prototype v0.3</title>
+<title>Port2Port CMS: Finance prototype v0.4</title>
 <style>
   /* Values taken from the live CMS stylesheet (CoreUI 2 / Bootstrap 4.3): 1rem = 14px? No: root is 16px, body .875rem = 14px. */
   :root{--side:#2f353a;--side-act:#3a4248;--side-hover:#20a8d8;--bg:#f7f7f7;--ink:#23282c;--muted:#5c6873;--input:#5c6873;--line:#c8ced3;--input-line:#e4e7ea;--hdr:#ebeaea;
@@ -160,6 +160,36 @@
   .ai p{margin:0 0 .5rem;line-height:1.6}
   .ai p:last-child{margin-bottom:0}
   @media (max-width:991.98px){.g2{grid-template-columns:1fr}}
+  /* journey (gamified run status) */
+  .next{display:flex;align-items:center;gap:1rem;border:1px solid #e6d9bf;background:#fbf6ea;border-radius:.25rem;padding:.875rem 1rem;margin-bottom:1rem}
+  .next .big{width:44px;height:44px;border-radius:50%;background:var(--gold-btn);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:1.125rem;flex:0 0 44px}
+  .next b{display:block;font-size:1rem}.next span.s{color:var(--muted);font-size:.8125rem}
+  .next .btn{margin-left:auto;white-space:nowrap}
+  .prog{display:flex;align-items:center;gap:.75rem;margin:0 0 1rem;font-size:.8125rem;color:var(--muted)}
+  .prog .track{flex:1;height:10px;background:#e4e7ea;border-radius:5px;overflow:hidden}
+  .prog .fill{height:100%;background:var(--green);border-radius:5px;transition:width .4s}
+  .prog b{color:var(--ink);font-size:.875rem}
+  .journey{list-style:none;margin:0;padding:0;counter-reset:j}
+  .j{display:grid;grid-template-columns:40px 1fr auto;gap:0 .875rem;align-items:center;padding:.625rem 0;border-bottom:1px solid #eef0f2;min-height:54px}
+  .j:last-child{border-bottom:0}
+  .j i{width:30px;height:30px;border-radius:50%;background:#e4e7ea;color:var(--input);font-style:normal;font-weight:700;font-size:.8125rem;display:flex;align-items:center;justify-content:center;margin:0 auto}
+  .j.done i{background:var(--green);color:#fff}.j.now i{background:var(--gold-btn);color:#fff;box-shadow:0 0 0 4px #f1e3c4}
+  .j.wait i{background:#fff;border:2px solid var(--gold-btn);color:var(--gold-text)}
+  .j b{display:block;font-size:.875rem;font-weight:600}.j.done b{color:var(--muted);font-weight:500}
+  .j .w{font-size:.75rem;color:var(--muted);line-height:1.5}
+  .j .who{font-size:.6875rem;font-weight:700;letter-spacing:.02em;text-transform:uppercase;color:#fff;background:#8a9399;border-radius:.2rem;padding:.1rem .4rem;margin-right:.35rem}
+  .j .who.r{background:var(--gold-btn)}.j .who.n{background:#3b5f8a}.j .who.h{background:var(--green)}
+  .j .st{font-size:.75rem;white-space:nowrap;text-align:right;color:var(--muted)}
+  .j.now .st,.j.wait .st{color:var(--gold-text);font-weight:600}
+  .badges{display:flex;gap:.5rem;flex-wrap:wrap;margin-top:1rem}
+  .badge{display:inline-flex;align-items:center;gap:.4rem;border:1px solid var(--line);border-radius:10rem;padding:.25rem .7rem .25rem .35rem;font-size:.75rem;background:#fff}
+  .badge i{width:20px;height:20px;border-radius:50%;background:var(--green);color:#fff;font-style:normal;font-size:.6875rem;display:flex;align-items:center;justify-content:center}
+  .badge.off{color:var(--muted)}.badge.off i{background:#c8ced3}
+  /* ga4 */
+  #t-ga td:first-child{white-space:nowrap}
+  .g3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:1.25rem;margin-bottom:1.25rem}
+  @media (max-width:1199.98px){.g3{grid-template-columns:1fr 1fr}}
+  @media (max-width:991.98px){.g3{grid-template-columns:1fr}}
   /* modal: Bootstrap .modal-content */
   .modal{position:fixed;inset:0;background:rgba(0,0,0,.5);display:none;align-items:flex-start;justify-content:center;padding:1.75rem 1rem;z-index:1050;overflow-y:auto}
   .modal.on{display:flex}
@@ -200,7 +230,7 @@
 </style>
 </head>
 <body>
-<aside class="proto" aria-label="Prototype notice">PROTOTYPE v0.3 (10 Oct 2026). Real figures as at 10 Oct 2026 from Xero, the CMS dashboard, the KPI sheet and Campaign Monitor; a snapshot, not a live connection.</aside>
+<aside class="proto" aria-label="Prototype notice">PROTOTYPE v0.4 (10 Oct 2026). Real figures as at 10 Oct 2026 from Xero, the CMS dashboard, the KPI sheet and Campaign Monitor; a snapshot, not a live connection.</aside>
 
 <header class="app-header">
   <button class="toggler" type="button" aria-label="Open menu" aria-controls="sidebar" aria-expanded="false" onclick="toggleSide()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg></button>
@@ -291,17 +321,13 @@
   </div>
 
   <div class="card">
-    <div class="card-h"><h2>Run status</h2><span class="meta" id="runMeta">September 2026: not started, month still open</span></div>
+    <div class="card-h"><h2>Your month, step by step</h2><span class="meta" id="runMeta"></span></div>
     <div class="card-b">
-      <ol class="steps" id="runSteps">
-        <li class="step done"><i aria-hidden="true">&#10003;</i>Month closed<em>Reeva, 3 Sep 09:14</em></li>
-        <li class="step done"><i aria-hidden="true">&#10003;</i>Feed checked<em>0 mismatches</em></li>
-        <li class="step done"><i aria-hidden="true">&#10003;</i>Xero invoices drafted<em>41 drafts</em></li>
-        <li class="step done"><i aria-hidden="true">&#10003;</i>Payout file ready<em>41 payments, R 586,500</em></li>
-        <li class="step now" aria-current="step"><i aria-hidden="true">5</i>Nic authorises on FNB<em>waiting since 4 Sep</em></li>
-        <li class="step"><i aria-hidden="true">6</i>Paid<em>failed payments: none yet</em></li>
-      </ol>
-      <p class="note">Hermes prepares, people approve. Invoices stay drafts in Xero and payments are released only by Nic on FNB.</p>
+      <div class="next" id="nextUp"></div>
+      <div class="prog"><b id="progTxt"></b><div class="track"><div class="fill" id="progFill" style="width:0"></div></div><span id="progEta"></span></div>
+      <ol class="journey" id="runSteps"></ol>
+      <div class="badges" id="badges"></div>
+      <p class="note">Hermes does the automatic steps and tells you when it is your turn. Invoices stay drafts in Xero until Nic approves them, and money moves only when Nic authorises on FNB.</p>
     </div>
   </div>
 
@@ -377,7 +403,7 @@
 <section class="view" id="v-growth" aria-labelledby="h-growth">
   <nav class="crumb" aria-label="Breadcrumb"><a href="#">Home</a><span>/</span><a href="#">Finance</a><span>/</span><em aria-current="page">Growth</em></nav>
 
-  <div class="lock"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg><span>Restricted page: Amber and Nic only. Figures from the CMS, Xero, the KPI sheet and Campaign Monitor as at 10 Oct 2026. FY27 runs March 2026 to February 2027.</span></div>
+  <div class="lock"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg><span>Restricted page: Amber and Nic only. Figures from the CMS, Xero, the KPI sheet, Campaign Monitor and Google Analytics as at 10 Oct 2026. FY27 runs March 2026 to February 2027.</span></div>
 
   <div class="card">
     <div class="card-h">
@@ -431,6 +457,25 @@
       <h3>Campaign performance by month</h3>
       <div class="tbl"><table class="compact kpi-t" id="t-cm"></table></div>
       <div class="ai" id="ai-nl"></div>
+    </div>
+  </div>
+
+
+  <!-- TRAFFIC AND ATTRIBUTION (GA4) -->
+  <div class="card">
+    <div class="card-h"><h2>Where the sales come from</h2><span class="meta">Google Analytics 4, property Port2Port - GA4. Sessions and tracked revenue by channel, FY27 to date.</span></div>
+    <div class="card-b">
+      <div class="row" id="gakpis" style="margin-bottom:1.25rem"></div>
+      <div class="g2">
+        <div><h3>Visits by channel, with sales on top</h3><div class="chart"><canvas id="c-sess" role="img" aria-label="Stacked bars of monthly sessions by channel with GMV as a line"></canvas></div><p class="legend"><i style="background:#6c7b6d"></i>Email <i style="background:#abd4ed"></i>Organic search <i style="background:#d9d9d9"></i>Direct <i style="background:#eca94b"></i>Paid social <i style="background:#bfc5ca"></i>Other <i style="background:#23282c;height:3px"></i>GMV, CMS (right axis)</p></div>
+        <div><h3>Tracked revenue by channel against actual sales</h3><div class="chart"><canvas id="c-rev" role="img" aria-label="Stacked bars of GA4 revenue by channel with CMS GMV as a line"></canvas></div><p class="legend"><i style="background:#6c7b6d"></i>Email <i style="background:#abd4ed"></i>Organic search <i style="background:#d9d9d9"></i>Direct <i style="background:#eca94b"></i>Paid social <i style="background:#bfc5ca"></i>Other <i style="background:#23282c;height:3px"></i>GMV, CMS</p></div>
+      </div>
+      <div class="g2">
+        <div><h3>Paid social: spend against what it brought in</h3><div class="chart"><canvas id="c-paid" role="img" aria-label="Bars of paid marketing spend and tracked paid social revenue per month, with new customers as a line"></canvas></div><p class="legend"><i style="background:#eca94b"></i>Spend (Xero) <i style="background:#6c7b6d"></i>Tracked paid-social revenue (GA4) <i style="background:#abd4ed"></i>New customers (right axis)</p></div>
+        <div><h3>Newsletter: clicks against email revenue</h3><div class="chart"><canvas id="c-email" role="img" aria-label="Bars of newsletter clicks per month with email-attributed revenue as a line"></canvas></div><p class="legend"><i style="background:#abd4ed"></i>Clicks (Campaign Monitor) <i style="background:#6c7b6d"></i>Email revenue, GA4 (right axis)</p></div>
+      </div>
+      <div class="tbl"><table class="compact kpi-t" id="t-ga"></table></div>
+      <div class="ai" id="ai-ga"></div>
     </div>
   </div>
 
@@ -498,13 +543,38 @@ function setHint(){const b=document.getElementById('closeBtn'),h=document.getEle
   else h.textContent='Clear the '+open+' open item'+(open>1?'s':'')+' above to enable the close.';}
 function recheck(){document.querySelector('#checklist .note').firstChild.textContent='Checked '+new Date().toLocaleString('en-GB',{day:'numeric',month:'short',year:'numeric',hour:'2-digit',minute:'2-digit'})+'. ';}
 // one month selector drives the close card and the run status
+// eight-step close journey. who: r=Reeva, h=Hermes (automatic), n=Nic
+const STEPS=[
+ ['Close the month','r','Once the checks above are clear, press Close. Nothing else starts before this.'],
+ ['Fees checked','h','Commission and shipping charges for every vendor, checked against the CMS orders. Mismatches come back to you here.'],
+ ['Xero invoices created','h','One commission invoice and one shipping invoice per vendor, as drafts. Nic approves them in Xero.'],
+ ['Invoices put on the CMS','h','The PDFs are uploaded to Accounts, Marketplace Invoices, where vendors download them.'],
+ ['Vendor emails sent','r','Press Send: every vendor gets the monthly snapshot with their sales, fees and invoices.'],
+ ['Payout file ready','h','Built only after the emails have gone out. You check the total against the month at a glance.'],
+ ['Nic authorises on FNB','n','Nic loads and releases the payment batch. Nothing moves before this.'],
+ ['Marked as paid','n','At month end Nic runs the paid file; Xero and the CMS are updated and the month is finished.']];
 const runs={
- 'August 2026':{meta:'August 2026: closed 3 Sep, waiting for FNB authorisation',state:['closed','Closed'],steps:[['done','Month closed','Reeva, 3 Sep 09:14'],['done','Feed checked','0 mismatches'],['done','Xero invoices drafted','41 drafts'],['done','Payout file ready','41 payments, R 586,500'],['now','Nic authorises on FNB','waiting since 4 Sep'],['','Paid','failed payments: none yet']]},
- 'September 2026':{meta:'September 2026: not started, month still open',state:['open','Open'],steps:[['','Month closed','waiting for Reeva'],['','Feed checked',''],['','Xero invoices drafted',''],['','Payout file ready',''],['','Nic authorises on FNB',''],['','Paid','']]},
- 'October 2026':{meta:'October 2026: not started, month still trading',state:['open','Open'],steps:[['','Month closed','available from 1 Nov'],['','Feed checked',''],['','Xero invoices drafted',''],['','Payout file ready',''],['','Nic authorises on FNB',''],['','Paid','']]}};
+ 'August 2026':{meta:'August 2026: closed 3 Sep. Nic is next.',state:['closed','Closed'],streak:true,
+   steps:['done','done','done','done','done','done','now',''],notes:['Reeva, 3 Sep 09:14','0 mismatches','41 + 41 drafts, approved 4 Sep','82 PDFs, 4 Sep','41 emails, 4 Sep 11:20','41 payments, R 586,500','waiting since 4 Sep','after 30 Sep']},
+ 'September 2026':{meta:'September 2026: not started, month still open.',state:['open','Open'],streak:true,
+   steps:['now','','','','','','',''],notes:['2 checks still open','','','','','','','']},
+ 'October 2026':{meta:'October 2026: still trading. Close opens on 1 November.',state:['open','Open'],streak:true,
+   steps:['','','','','','','',''],notes:['from 1 Nov','','','','','','','']}};
 function renderRun(m){const r=runs[m];document.getElementById('runMeta').textContent=r.meta;
-  document.getElementById('runSteps').innerHTML=r.steps.map((s,i)=>`<li class="step ${s[0]}" ${s[0]==='now'?'aria-current="step"':''}><i aria-hidden="true">${s[0]==='done'?'&#10003;':i+1}</i>${s[1]}<em>${s[2]||'&nbsp;'}</em></li>`).join('');
+  const done=r.steps.filter(s=>s==='done').length;
+  document.getElementById('runSteps').innerHTML=STEPS.map((s,i)=>{const st=r.steps[i];const yours=st==='now'&&s[1]==='r';
+    const cls=st==='done'?'done':st==='now'?(s[1]==='r'?'now':'wait'):'';
+    const stt=st==='done'?('Done'+(r.notes[i]?': '+r.notes[i]:'')):st==='now'?(s[1]==='r'?'Your turn':s[1]==='n'?'Waiting for Nic':'Hermes is on it'):(r.notes[i]||'Later');
+    return `<li class="j ${cls}" ${st==='now'?'aria-current="step"':''}><i aria-hidden="true">${st==='done'?'&#10003;':i+1}</i><div><b>${s[0]}</b><span class="w"><span class="who ${s[1]}">${s[1]==='r'?'You':s[1]==='n'?'Nic':'Automatic'}</span>${s[2]}</span></div><span class="st">${stt}</span></li>`;}).join('');
+  document.getElementById('progTxt').textContent=done+' of 8 done';document.getElementById('progFill').style.width=(done/8*100)+'%';
+  document.getElementById('progEta').textContent=done===8?'Month finished':done===0?'About 2 days once you close':'Usually 2 days from close to payout';
+  const ni=r.steps.indexOf('now');const nx=document.getElementById('nextUp');
+  if(ni<0){nx.innerHTML=`<div class="big">&#10003;</div><div><b>Nothing to do yet</b><span class="s">${m==='October 2026'?'October is still trading. Come back on 1 November.':'All eight steps are finished.'}</span></div>`;}
+  else{const s=STEPS[ni];const you=s[1]==='r';
+    nx.innerHTML=`<div class="big">${ni+1}</div><div><b>${you?'Next for you: '+s[0].toLowerCase():'Waiting for '+(s[1]==='n'?'Nic':'Hermes')+': '+s[0].toLowerCase()}</b><span class="s">${you?(ni===0?'Clear the open items above, then press Close.':s[2]):'You will get a message when it is your turn again.'}</span></div>${you&&ni===4?'<button class="btn b-gold" type="button" onclick="sendVendorMail()">Send vendor emails</button>':''}`;}
+  document.getElementById('badges').innerHTML=[['Closed on time','4 months in a row',true],['Zero mismatches','2 months in a row',true],['Vendors paid in 2 days','last month: 1 day',true],['No reopen','September: still to earn',false]].map(b=>`<span class="badge ${b[2]?'':'off'}"><i aria-hidden="true">${b[2]?'&#9733;':'&#8226;'}</i>${b[0]}<span class="dim">: ${b[1]}</span></span>`).join('');
   const st=document.getElementById('closeState');st.className='pill p-'+r.state[0];st.textContent=r.state[1];}
+function sendVendorMail(){alert('Prototype: this sends the monthly snapshot email to every vendor with sales, then Hermes builds the payout file.');}
 function pickMonth(m){document.getElementById('closeBtn').textContent='Close '+m;document.getElementById('mTitle').textContent='Close '+m+'?';renderRun(m);
   const closable=m==='September 2026'&&open===0;const b=document.getElementById('closeBtn');b.setAttribute('aria-disabled',closable?'false':'true');
   const h=document.getElementById('closeHint');if(m==='August 2026')h.textContent='August is already closed. Use Reopen in the table below if a figure must change.';else if(m==='October 2026')h.textContent='October is still trading. The close becomes available on 1 November.';else setHint();
@@ -516,7 +586,7 @@ function closeModal(id){document.getElementById(id).classList.remove('on');if(la
 document.addEventListener('keydown',e=>{if(e.key==='Escape')document.querySelectorAll('.modal.on').forEach(m=>closeModal(m.id));});
 function confirmClose(){closeModal('modal');const s=document.getElementById('closeState');s.className='pill p-closed';s.textContent='Closed';
   const b=document.getElementById('closeBtn');b.setAttribute('aria-disabled','true');b.textContent='Closed by Reeva, 10 Oct 10:43';
-  document.getElementById('closeHint').textContent='Run started. Progress appears under Run status.';}
+  document.getElementById('closeHint').textContent='Run started. Follow the steps below.';runs['September 2026'].steps=['done','now','','','','','',''];runs['September 2026'].notes[0]='Reeva, 10 Oct 10:43';renderRun('September 2026');}
 function confirmReopen(){const r=document.getElementById('rReason');if(!r.value.trim()){document.getElementById('rErr').style.display='block';r.focus();return;}
   closeModal('reopen');alert('Prototype: August would now be reopened with the reason logged, and the run status would show "Reopened".');}
 
@@ -644,7 +714,7 @@ document.getElementById('nlkpis').innerHTML=
 const ai=(id,body)=>document.getElementById(id).innerHTML=`<div class="ai-h"><span class="ai-tag">Hermes</span><b>Commentary</b><span class="meta">Generated 10 Oct 2026 from the figures above. Regenerated after each month close; nothing here is typed by hand.</span></div>${body}`;
 ai('ai-sales',`<p><b>What happened.</b> September GMV was ${fmtR(s.gmv[18])}, 36% below September 2025. That comparison is misleading: last year's number carried R1.31m of NGF partner sales, a channel that ended in May 2026. Against the core marketplace a year ago (R750,578) September is up 77%, and March to September ex-NGF is up 54% (R8.63m against R5.59m). Orders are 16% fewer over the same seven months (2,080 against 2,489), so the growth is price, not volume: AOV reached ${fmtR(s.aov[18])} in September, the highest since the Trophy Wine Show.</p>
 <p><b>What caused it.</b> Site visitors fell 40% year on year (90,791 against 150,506 for March to June) while conversion rose from 0.6-1.5% to 0.9-2.6%. Fewer people arrive, and the ones who arrive are buyers. June (R3.53m) is the Trophy Wine Show allocation and is not a monthly run rate.</p>
-<p><b>Watch.</b> October to date is R359k from 79 orders in ten days, pacing to roughly R1.1m against R1.14m last October. August (R748k) was the weakest month since February.</p>
+<p><b>Watch.</b> Visits are down 56% on last September (GA4 block below). October to date is R359k from 79 orders in ten days, pacing to roughly R1.1m against R1.14m last October. August (R748k) was the weakest month since February.</p>
 <p><b>Suggested action.</b> Traffic is the constraint, not conversion. Decide where the next 50,000 visitors a month come from (newsletter, paid, partnerships) before adding further marketing spend to a shrinking audience.</p>`);
 ai('ai-cust',`<p><b>What happened.</b> New customers are down a third: 535 for March to September against 798 a year ago. Returning customers held at 1,287 (down 4%) and now make up 71% of buyers (63% last year). Site signups fell by the same third (1,183 against 1,776).</p>
 <p><b>What caused it.</b> The loyal base is intact and spends more per order (returning AOV R4,906 against R4,297 for new buyers in FY25); the acquisition funnel is what has shrunk. Over five years the average gap between purchases lengthened from 146 to 240 days, and FY25's repurchase rate dropped to 25% because the NGF influx brought one-off buyers who did not come back.</p>
@@ -658,6 +728,34 @@ ai('ai-econ',`<p><b>What happened.</b> The take rate (commission income over onl
 <p><b>What probably caused it.</b> Vendor mix is the usual cause: a larger share of sales from vendors on lower negotiated commission rates and from large single-vendor allocations, which carry lower rates than the standard tier. The CMS feed will confirm this once commission by vendor is available. June is shown as mixed because Trophy Wine Show sales are booked as retail with a separate referral fee. The budget assumed R2.35m of GMV in September at about 20%; actual GMV was R1.33m at 18.1%, so roughly 80% of the shortfall is volume and 20% is rate.</p>
 <p><b>Watch.</b> Marketing is 24% of commission income for the year to date (R283k of R1.37m) and 15% to 54% month by month. Payroll at R175k a month is 73% of September's commission.</p>
 <p><b>Suggested action.</b> A commission report by vendor tier from the CMS feed (PIV-516) to confirm the mix explanation, then a review of the 10% tier: either volume commitments or a move to 15%. Until the take rate is back above 20%, the FY27 commission budget should be re-based to about R2.0m for the year.</p>`);
+// ----- GA4 block -----
+const GA={"months":["Mar-26","Apr-26","May-26","Jun-26","Jul-26","Aug-26","Sep-26"],"sessions":[29633.0,20917.0,22723.0,31006.0,22621.0,21440.0,19128.0],"sess_ly_sep":43032.0,"rev_ly_sep":1747855.0,"ga_rev":[690044.0,509180.0,534006.0,3024956.0,931676.0,508466.0,401156.0],"by_chan_sess":{"Email":[7411.0,4118.0,5078.0,5847.0,4155.0,4233.0,4789.0],"Organic Search":[10544.0,9480.0,9354.0,8406.0,8813.0,8089.0,7609.0],"Direct":[7099.0,5036.0,4788.0,11041.0,5979.0,6878.0,4807.0],"Paid Social":[282.0,413.0,983.0,1710.0,771.0,655.0,377.0],"Organic Social":[1565.0,333.0,488.0,1305.0,1766.0,671.0,423.0],"Referral":[274.0,251.0,315.0,1068.0,387.0,295.0,341.0],"Unassigned":[2619.0,1837.0,1870.0,1600.0,723.0,884.0,708.0]},"by_chan_rev":{"Email":[364189.0,248122.0,283614.0,1915901.0,519294.0,205063.0,249408.0],"Organic Search":[186796.0,148136.0,163725.0,336148.0,189751.0,240262.0,69220.0],"Direct":[126208.0,105382.0,34230.0,544888.0,170784.0,56394.0,58466.0],"Paid Social":[0.0,1209.0,1470.0,10610.0,13233.0,0.0,0.0],"Organic Social":[0.0,0.0,0.0,0.0,1293.0,0.0,0.0],"Referral":[0.0,0.0,6569.0,172750.0,21321.0,0.0,21894.0],"Unassigned":[12339.0,6331.0,44398.0,44659.0,16000.0,6747.0,2168.0]},"ly_chan":{"Email":[12212.0,1041565.0],"Organic Search":[10764.0,355574.0],"Direct":[14339.0,222794.0],"Paid Social":[4509.0,86478.0],"Organic Social":[580.0,0.0],"Referral":[409.0,13132.0],"Unassigned":[1156.0,21844.0]},"gmv":[856624.4,761541.5,633098.4,3528757.4,1044424.8,748391,1330069],"paid":[5146,9064,27569,23823,5095,64125,23295],"newc":[50.0,45.0,38.0,238.0,58,48,58],"nl_clicks":[10491,5310,6385,4691,3947,10036,10905]};
+const CH={Email:'#6c7b6d','Organic Search':'#abd4ed',Direct:'#d9d9d9','Paid Social':'#eca94b'};
+const other=k=>GA.months.map((_,i)=>['Organic Social','Referral','Unassigned'].reduce((a,c)=>a+(GA[k][c][i]||0),0));
+const stack=(k,fmt)=>[...Object.keys(CH).map(c=>B(c,GA[k][c],CH[c],{stack:'a',fmt})),B('Other',other(k),'#bfc5ca',{stack:'a',fmt})];
+new Chart(document.getElementById('c-sess'),{type:'bar',data:{labels:GA.months.map(m=>m.slice(0,3)),datasets:[...stack('by_chan_sess',fmtN),L('GMV (CMS)',GA.gmv,'#23282c',{type:'line',yAxisID:'r',fmt:fmtR})]},
+ options:{scales:{xAxes:[{stacked:true,gridLines:{display:false}}],yAxes:[{stacked:true,ticks:{beginAtZero:true,callback:v=>fmtN(v)},gridLines:{color:'rgba(0,0,0,.08)'}},{id:'r',position:'right',ticks:{beginAtZero:true,callback:v=>fmtK(v)},gridLines:{display:false}}]},tooltips:{mode:'index',intersect:false,callbacks:{label:(t,d)=>d.datasets[t.datasetIndex].label+': '+(d.datasets[t.datasetIndex].fmt||fmtN)(t.yLabel)}}}});
+new Chart(document.getElementById('c-rev'),{type:'bar',data:{labels:GA.months.map(m=>m.slice(0,3)),datasets:[...stack('by_chan_rev',fmtR),L('GMV (CMS)',GA.gmv,'#23282c',{type:'line',fmt:fmtR})]},
+ options:{scales:{xAxes:[{stacked:true,gridLines:{display:false}}],yAxes:[{stacked:true,ticks:{beginAtZero:true,callback:v=>fmtK(v)},gridLines:{color:'rgba(0,0,0,.08)'}}]},tooltips:{mode:'index',intersect:false,callbacks:{label:(t,d)=>d.datasets[t.datasetIndex].label+': '+fmtR(t.yLabel)}}}});
+new Chart(document.getElementById('c-paid'),{type:'bar',data:{labels:GA.months.map(m=>m.slice(0,3)),datasets:[B('Spend',GA.paid,'#eca94b',{fmt:fmtR}),B('Tracked paid-social revenue',GA.by_chan_rev['Paid Social'],'#6c7b6d',{fmt:fmtR}),L('New customers',GA.newc,'#abd4ed',{type:'line',yAxisID:'r',fmt:fmtN})]},
+ options:{scales:{xAxes:[{gridLines:{display:false}}],yAxes:[{ticks:{beginAtZero:true,callback:v=>fmtK(v)},gridLines:{color:'rgba(0,0,0,.08)'}},{id:'r',position:'right',ticks:{beginAtZero:true},gridLines:{display:false}}]},tooltips:{mode:'index',intersect:false,callbacks:{label:(t,d)=>d.datasets[t.datasetIndex].label+': '+(d.datasets[t.datasetIndex].fmt||fmtN)(t.yLabel)}}}});
+new Chart(document.getElementById('c-email'),{type:'bar',data:{labels:GA.months.map(m=>m.slice(0,3)),datasets:[B('Newsletter clicks',GA.nl_clicks,'#abd4ed',{fmt:fmtN}),L('Email revenue (GA4)',GA.by_chan_rev.Email,'#6c7b6d',{type:'line',yAxisID:'r',fmt:fmtR})]},
+ options:{scales:{xAxes:[{gridLines:{display:false}}],yAxes:[{ticks:{beginAtZero:true,callback:v=>fmtN(v)},gridLines:{color:'rgba(0,0,0,.08)'}},{id:'r',position:'right',ticks:{beginAtZero:true,callback:v=>fmtK(v)},gridLines:{display:false}}]},tooltips:{mode:'index',intersect:false,callbacks:{label:(t,d)=>d.datasets[t.datasetIndex].label+': '+(d.datasets[t.datasetIndex].fmt||fmtN)(t.yLabel)}}}});
+const g6=6,cov=GA.ga_rev[g6]/GA.gmv[g6],emSh=GA.by_chan_rev.Email[g6]/GA.ga_rev[g6];
+document.getElementById('gakpis').innerHTML=
+ tile(fmtN(GA.sessions[g6]),'Visits, September',`${yoy(GA.sessions[g6],GA.sess_ly_sep)} on Sep 2025 (${fmtN(GA.sess_ly_sep)})<br>Organic search ${pct(GA.by_chan_sess['Organic Search'][g6]/GA.sessions[g6],0)}, email ${pct(GA.by_chan_sess.Email[g6]/GA.sessions[g6],0)}`,'dark')+
+ tile(pct(emSh,0),'of tracked sales from email',`${fmtR(GA.by_chan_rev.Email[g6])} in September<br>from ${fmtN(GA.by_chan_sess.Email[g6])} email visits`)+
+ tile(fmtR(GA.by_chan_rev['Paid Social'][g6]),'Paid social sales tracked',`Spend ${fmtR(GA.paid[g6])} in September<br>Aug: R0 tracked on ${fmtR(GA.paid[5])} spend`,'bad')+
+ tile(pct(cov,0),'of sales visible in GA4',`GA4 ${fmtR(GA.ga_rev[g6])} against CMS ${fmtR(GA.gmv[g6])}<br>June was ${pct(GA.ga_rev[3]/GA.gmv[3],0)}`,'bad');
+let hh=th(['FY27','Visits','Email visits','Organic visits','Paid social visits','GA4 revenue','Email revenue','Paid social revenue','CMS GMV','Visible in GA4','Sales per 100 visits'])+'<tbody>';
+GA.months.forEach((m,i)=>{hh+=`<tr><td>${m}</td>${td(fmtN(GA.sessions[i]))}${td(fmtN(GA.by_chan_sess.Email[i]))}${td(fmtN(GA.by_chan_sess['Organic Search'][i]))}${td(fmtN(GA.by_chan_sess['Paid Social'][i]))}${td(fmtR(GA.ga_rev[i]))}${td(fmtR(GA.by_chan_rev.Email[i]))}${td(fmtR(GA.by_chan_rev['Paid Social'][i]))}${td(fmtR(GA.gmv[i]))}${td(pct(GA.ga_rev[i]/GA.gmv[i],0))}${td(fmtR(GA.gmv[i]/GA.sessions[i]*100))}</tr>`;});
+hh+=`<tr><td>Sep-25</td>${td(fmtN(GA.sess_ly_sep))}${td(fmtN(GA.ly_chan.Email[0]))}${td(fmtN(GA.ly_chan['Organic Search'][0]))}${td(fmtN(GA.ly_chan['Paid Social'][0]))}${td(fmtR(GA.rev_ly_sep))}${td(fmtR(GA.ly_chan.Email[1]))}${td(fmtR(GA.ly_chan['Paid Social'][1]))}${td(fmtR(s.gmv[6]))}${td(pct(GA.rev_ly_sep/s.gmv[6],0))}${td(fmtR(s.gmv[6]/GA.sess_ly_sep*100))}</tr></tbody>`;
+document.getElementById('t-ga').innerHTML=hh;
+ai('ai-ga',`<p><b>What happened.</b> Visits fell from 43,032 in September 2025 to ${fmtN(GA.sessions[g6])} this September (down 56%), and from 29,633 in March to ${fmtN(GA.sessions[g6])} within FY27. Email visits fell from 12,212 to ${fmtN(GA.by_chan_sess.Email[g6])} and paid social from 4,509 to ${fmtN(GA.by_chan_sess['Paid Social'][g6])}; organic search held at 7,600 to 10,500 a month and is now the largest source of visits. Sales per 100 visits rose from R4,800 to R${fmtN(GA.gmv[g6]/GA.sessions[g6]*100)}, which is why sales held up while traffic halved.</p>
+<p><b>Cause and effect.</b> Email is the channel that sells: ${pct(emSh,0)} of tracked revenue in September from 25% of visits, but revenue follows what is sent, not how many click: June's allocation offers brought R1.9m of email revenue on 4,600 clicks, while August's 10,000 clicks brought R205k. The offer matters more than the volume. Paid social brought ${fmtR(GA.by_chan_rev['Paid Social'][g6])} of tracked sales in September on ${fmtR(GA.paid[g6])} of spend, and R0 in August on ${fmtR(GA.paid[5])}; the May and June spend coincided with the Trophy Wine Show, where direct and email sold the allocation. The traffic decline tracks the newsletter decline (list down 10%, sends cut by two thirds), not search.</p>
+<p><b>Caution on the numbers.</b> GA4 sees only ${pct(cov,0)} of September's sales (${fmtR(GA.ga_rev[g6])} against ${fmtR(GA.gmv[g6])} in the CMS) but 86% of June's. The likely cause is that EFT orders never fire the purchase event, so card-heavy months look complete and EFT-heavy months do not. Channel shares are directionally right; the rand amounts are not. Chris should confirm the purchase event on the EFT confirmation path.</p>
+<p><b>Suggested action for Amber.</b> (1) Treat the newsletter as the sales engine it is: a weekly send to the whole engaged list, with the "warm non-buyers" segments (7,923 people) on a separate offer, and measure clicks to orders monthly here. (2) Pause paid social until a tracked campaign shows a return; R158k has gone out this year with R27k tracked back. (3) Protect organic search: it is the one channel still growing in share, and product pages are what Google sends people to. (4) Fix GA4 purchase tracking for EFT orders so this page can be trusted to the rand.</p>`);
+
 };
 </script>
 </body>
