@@ -228,6 +228,17 @@
     .step i{left:0;top:0}
     .months{grid-template-columns:repeat(4,1fr)}
   }
+
+  #v-growth .card.acc>.card-h{padding:0}
+  #v-growth .card.acc .acc-btn{display:flex;align-items:center;gap:10px;width:100%;background:none;border:0;padding:12px 16px;text-align:left;cursor:pointer;font:inherit;color:inherit}
+  #v-growth .card.acc .acc-btn h2{margin:0}
+  #v-growth .card.acc .acc-btn:focus-visible{outline:2px solid var(--focus);outline-offset:-2px}
+  #v-growth .card.acc .chev{margin-left:auto;width:8px;height:8px;border-right:2px solid #5c6873;border-bottom:2px solid #5c6873;transform:rotate(-45deg);transition:transform .15s}
+  #v-growth .card.acc.open .chev{transform:rotate(45deg)}
+  #v-growth .card.acc .card-h .meta{display:block;padding:0 16px 10px}
+  #v-growth .card.acc:not(.open) .card-h .meta{display:none}
+  #v-growth .card.acc:not(.open)>.card-b{display:none}
+  #v-growth .card.acc:not(.open)>.card-h{border-bottom:0}
 </style>
 </head>
 <body>
@@ -419,9 +430,7 @@
   </div>
 
   <!-- SALES -->
-  <div class="card">
-    <div class="card-h"><h2>Sales</h2><span class="meta">GMV is the product value of CMS orders incl VAT, before shipping and discounts. Prior year in blue. Core marketplace excludes NGF and Port2Port own stock.</span></div>
-    <div class="card-b">
+  <div class="card acc open" data-acc="1"><div class="card-h"><button type="button" class="acc-btn" id="acc-b1" aria-expanded="true" aria-controls="acc-p1"><h2>Sales</h2><span class="chev" aria-hidden="true"></span></button><span class="meta">GMV is the product value of CMS orders incl VAT, before shipping and discounts. Prior year in blue. Core marketplace excludes NGF and Port2Port own stock.</span></div><div class="card-b" id="acc-p1" role="region" aria-labelledby="acc-b1">
       <div class="g2">
         <div><h3>GMV by month, FY27 vs FY26</h3><div class="chart"><canvas id="c-gmv" role="img" aria-label="Line chart of monthly GMV: FY27 March to September against FY26 March to February"></canvas></div><p class="legend"><i style="background:#6c7b6d"></i>FY27 <i style="background:#abd4ed"></i>FY26 <i style="background:#eca94b"></i>FY27 core <i style="background:#c9a27a"></i>FY26 core</p></div>
         <div><h3>Orders and average order value</h3><div class="chart"><canvas id="c-orders" role="img" aria-label="Bars of monthly orders for FY27 and FY26 with average order value lines"></canvas></div><p class="legend"><i style="background:#6c7b6d"></i>Orders FY27 <i style="background:#abd4ed"></i>Orders FY26 <i style="background:#eca94b"></i>AOV FY27 (right axis)</p></div>
@@ -432,9 +441,7 @@
   </div>
 
   <!-- CUSTOMERS -->
-  <div class="card">
-    <div class="card-h"><h2>Customers</h2><span class="meta">New and returning buyers per month (CMS dashboard); lifetime figures per financial year computed from every CMS order since March 2020 and Xero marketing spend</span></div>
-    <div class="card-b">
+  <div class="card acc" data-acc="2"><div class="card-h"><button type="button" class="acc-btn" id="acc-b2" aria-expanded="false" aria-controls="acc-p2"><h2>Customers</h2><span class="chev" aria-hidden="true"></span></button><span class="meta">New and returning buyers per month (CMS dashboard); lifetime figures per financial year computed from every CMS order since March 2020 and Xero marketing spend</span></div><div class="card-b" id="acc-p2" role="region" aria-labelledby="acc-b2">
       <div class="g2">
         <div><h3>New and returning customers, FY27 vs FY26</h3><div class="chart"><canvas id="c-cust" role="img" aria-label="Stacked bars of new and returning customers per month for FY27, with the FY26 total as a line"></canvas></div><p class="legend"><i style="background:#eca94b"></i>New <i style="background:#6c7b6d"></i>Returning <i style="background:#abd4ed"></i>FY26 total</p></div>
         <div><h3>Returning share and marketing cost per new customer</h3><div class="chart"><canvas id="c-ret" role="img" aria-label="Returning customer share per month for FY27 and FY26, with paid acquisition per new customer as bars"></canvas></div><p class="legend"><i style="background:#6c7b6d"></i>Returning share FY27 <i style="background:#abd4ed"></i>FY26 <i style="background:#eca94b"></i>Paid acquisition per new customer, R (right axis)</p></div>
@@ -447,9 +454,7 @@
   </div>
 
   <!-- NEWSLETTER -->
-  <div class="card">
-    <div class="card-h"><h2>Newsletter and marketing</h2><span class="meta">Campaign Monitor, client Port2Port, list [01] MASTER: P2P. Live via the reporting API; daily history from July 2025.</span></div>
-    <div class="card-b">
+  <div class="card acc" data-acc="3"><div class="card-h"><button type="button" class="acc-btn" id="acc-b3" aria-expanded="false" aria-controls="acc-p3"><h2>Newsletter and marketing</h2><span class="chev" aria-hidden="true"></span></button><span class="meta">Campaign Monitor, client Port2Port, list [01] MASTER: P2P. Live via the reporting API; daily history from July 2025.</span></div><div class="card-b" id="acc-p3" role="region" aria-labelledby="acc-b3">
       <div class="row" id="nlkpis" style="margin-bottom:1.25rem"></div>
       <div class="g2">
         <div><h3>Active subscribers, month end</h3><div class="chart"><canvas id="c-nl" role="img" aria-label="Line chart of active newsletter subscribers at each month end from March 2025 to October 2026"></canvas></div><p class="legend"><i style="background:#6c7b6d"></i>Master list <i style="background:#eca94b"></i>Net change in month (bars, right axis)</p></div>
@@ -463,9 +468,7 @@
 
 
   <!-- TRAFFIC AND ATTRIBUTION (GA4) -->
-  <div class="card">
-    <div class="card-h"><h2>Where the sales come from</h2><span class="meta">Google Analytics 4, property Port2Port - GA4. Sessions and tracked revenue by channel, FY27 to date.</span></div>
-    <div class="card-b">
+  <div class="card acc" data-acc="4"><div class="card-h"><button type="button" class="acc-btn" id="acc-b4" aria-expanded="false" aria-controls="acc-p4"><h2>Where the sales come from</h2><span class="chev" aria-hidden="true"></span></button><span class="meta">Google Analytics 4, property Port2Port - GA4. Sessions and tracked revenue by channel, FY27 to date.</span></div><div class="card-b" id="acc-p4" role="region" aria-labelledby="acc-b4">
       <div class="row" id="gakpis" style="margin-bottom:1.25rem"></div>
       <div class="g2">
         <div><h3>Visits by channel, with sales on top</h3><div class="chart"><canvas id="c-sess" role="img" aria-label="Stacked bars of monthly sessions by channel with GMV as a line"></canvas></div><p class="legend"><i style="background:#6c7b6d"></i>Email <i style="background:#abd4ed"></i>Organic search <i style="background:#d9d9d9"></i>Direct <i style="background:#eca94b"></i>Paid social <i style="background:#bfc5ca"></i>Other <i style="background:#23282c;height:3px"></i>GMV, CMS (right axis)</p></div>
@@ -481,9 +484,7 @@
   </div>
 
   <!-- ECONOMICS -->
-  <div class="card">
-    <div class="card-h"><h2>Marketplace economics</h2><span class="meta">Take rate = MP commission income (Xero, excl VAT) / third-party sales in the CMS (incl VAT, excluding Port2Port own stock). Vendor payout = CMS payout amounts for the month.</span></div>
-    <div class="card-b">
+  <div class="card acc" data-acc="5"><div class="card-h"><button type="button" class="acc-btn" id="acc-b5" aria-expanded="false" aria-controls="acc-p5"><h2>Marketplace economics</h2><span class="chev" aria-hidden="true"></span></button><span class="meta">Take rate = MP commission income (Xero, excl VAT) / third-party sales in the CMS (incl VAT, excluding Port2Port own stock). Vendor payout = CMS payout amounts for the month.</span></div><div class="card-b" id="acc-p5" role="region" aria-labelledby="acc-b5">
       <div class="g2">
         <div><h3>Take rate by month</h3><div class="chart"><canvas id="c-take" role="img" aria-label="Line chart of monthly take rate for FY27 and FY26"></canvas></div><p class="legend"><i style="background:#6c7b6d"></i>FY27 <i style="background:#abd4ed"></i>FY26</p></div>
         <div><h3>Commission income against budget, R thousand</h3><div class="chart"><canvas id="c-comm" role="img" aria-label="Bars of monthly MP commission income for FY27 against the FY27 budget"></canvas></div><p class="legend"><i style="background:#6c7b6d"></i>Actual <i style="background:#d9d9d9"></i>Budget</p></div>
@@ -765,6 +766,14 @@ ai('ai-ga',`<p><b>What happened.</b> Visits fell from 43,032 in September 2025 t
 <p><b>Caution on the numbers.</b> GA4 sees only ${pct(cov,0)} of September's sales (${fmtR(GA.ga_rev[g6])} against ${fmtR(GA.gmv[g6])} in the CMS) but 86% of June's. The likely cause is that EFT orders never fire the purchase event, so card-heavy months look complete and EFT-heavy months do not. Channel shares are directionally right; the rand amounts are not. Chris should confirm the purchase event on the EFT confirmation path.</p>
 <p><b>Suggested action for Amber.</b> (1) Treat the newsletter as the sales engine it is: a weekly send to the whole engaged list, with the "warm non-buyers" segments (7,923 people) on a separate offer, and measure clicks to orders monthly here. (2) Pause paid social until a tracked campaign shows a return; ${fmtK(GA.paid.reduce((a,b)=>a+b,0))} has gone out this year with ${fmtK(GA.by_chan_rev['Paid Social'].reduce((a,b)=>a+b,0))} tracked back. (3) Protect organic search: it is the one channel still growing in share, and product pages are what Google sends people to. (4) Fix GA4 purchase tracking for EFT orders so this page can be trusted to the rand.</p>`);
 
-};</script>
+};
+document.querySelectorAll('#v-growth .acc-btn').forEach(b=>b.addEventListener('click',()=>{
+  const card=b.closest('.card.acc'),was=card.classList.contains('open');
+  document.querySelectorAll('#v-growth .card.acc').forEach(c=>{c.classList.remove('open');c.querySelector('.acc-btn').setAttribute('aria-expanded','false');});
+  if(!was){card.classList.add('open');b.setAttribute('aria-expanded','true');
+    if(window.Chart&&Chart.instances){Object.keys(Chart.instances).forEach(k=>{const c=Chart.instances[k];if(card.contains(c.canvas))c.resize();});}
+    if(card.getBoundingClientRect().top<0)window.scrollTo({top:card.getBoundingClientRect().top+window.pageYOffset-70,behavior:'smooth'});}
+}));
+</script>
 </body>
 </html>
