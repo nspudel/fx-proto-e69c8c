@@ -199,17 +199,19 @@
       <label class="sr-only" for="mSel">Month</label>
       <select id="mSel" onchange="pickMonth(this.value)"><option>October 2026</option><option selected>September 2026</option><option>August 2026</option></select>
       <span class="pill p-open" id="closeState">Open</span>
-      <span class="meta">Who closes: Reeva. The run starts automatically after the close.</span>
+      <span class="meta">Reeva closes; Nic and Amber see this page too. Designed for computer use.</span>
     </div>
     <div class="card-b">
       <div class="row">
         <div style="flex:1.4 1 300px;min-width:0">
           <h2 style="font-size:14px;margin:0 0 10px">Before you close (all items must be clear)</h2>
+          <div id="checklist">
           <div class="exc" id="e1" role="group" aria-label="Open item 1"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg><span class="t"><b>3 orders</b> still on Payment Pending or Processing</span><button class="link-btn" type="button" onclick="fix('e1')">Review orders &rarr;</button></div>
           <div class="exc" id="e2" role="group" aria-label="Open item 2"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg><span class="t"><b>5 shipments</b> with vendor share of R1,500 or more and no courier cost entered</span><button class="link-btn" type="button" onclick="fix('e2')">Enter costs &rarr;</button></div>
           <div class="exc okk"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg><span class="t">All EFT payments captured (412 orders)</span></div>
           <div class="exc okk"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg><span class="t">Vendor bank details verified for 46 of 46 vendors with sales</span></div>
           <p class="note" style="margin:4px 0 12px">Checked 10 Oct 2026, 10:42. <button class="link-btn" type="button" onclick="recheck()">Check again</button></p>
+          </div>
           <div style="display:flex;gap:12px;align-items:center;flex-wrap:wrap">
             <button class="btn b-gold" id="closeBtn" type="button" aria-disabled="true" aria-describedby="closeHint" onclick="openModal('modal')">Close September 2026</button>
             <span class="note" id="closeHint" style="margin:0" aria-live="polite">Clear the 2 open items above to enable the close.</span>
@@ -232,9 +234,9 @@
   </div>
 
   <div class="card">
-    <div class="card-h"><h2>Run status</h2><span class="meta">August 2026 (closed 3 Sep)</span></div>
+    <div class="card-h"><h2>Run status</h2><span class="meta" id="runMeta">September 2026: not started, month still open</span></div>
     <div class="card-b">
-      <ol class="steps" style="padding:0;list-style:none">
+      <ol class="steps" id="runSteps" style="padding:0;list-style:none">
         <li class="step done"><i aria-hidden="true">&#10003;</i>Month closed<em>Reeva, 3 Sep 09:14</em></li>
         <li class="step done"><i aria-hidden="true">&#10003;</i>Feed checked<em>0 mismatches</em></li>
         <li class="step done"><i aria-hidden="true">&#10003;</i>Xero invoices drafted<em>44 drafts</em></li>
@@ -359,8 +361,20 @@ function fix(id){const e=document.getElementById(id);e.classList.add('okk');e.qu
 function setHint(){const b=document.getElementById('closeBtn'),h=document.getElementById('closeHint');
   if(open===0){b.setAttribute('aria-disabled','false');h.textContent='All checks clear. Closing asks you to confirm first.';}
   else h.textContent='Clear the '+open+' open item'+(open>1?'s':'')+' above to enable the close.';}
-function recheck(){document.querySelector('#v-close .note').firstChild.textContent='Checked '+new Date().toLocaleString('en-GB',{day:'numeric',month:'short',year:'numeric',hour:'2-digit',minute:'2-digit'})+'. ';}
-function pickMonth(m){document.getElementById('closeBtn').textContent='Close '+m;document.getElementById('mTitle').textContent='Close '+m+'?';}
+function recheck(){document.querySelector('#checklist .note').firstChild.textContent='Checked '+new Date().toLocaleString('en-GB',{day:'numeric',month:'short',year:'numeric',hour:'2-digit',minute:'2-digit'})+'. ';}
+// one month selector drives the close card and the run status
+const runs={
+ 'August 2026':{meta:'August 2026: closed 3 Sep, waiting for FNB authorisation',state:['closed','Closed'],steps:[['done','Month closed','Reeva, 3 Sep 09:14'],['done','Feed checked','0 mismatches'],['done','Xero invoices drafted','44 drafts'],['done','Payout file ready','44 payments, R 1,548,010'],['now','Nic authorises on FNB','waiting since 4 Sep'],['','Paid','failed payments: none yet']]},
+ 'September 2026':{meta:'September 2026: not started, month still open',state:['open','Open'],steps:[['','Month closed','waiting for Reeva'],['','Feed checked',''],['','Xero invoices drafted',''],['','Payout file ready',''],['','Nic authorises on FNB',''],['','Paid','']]},
+ 'October 2026':{meta:'October 2026: not started, month still trading',state:['open','Open'],steps:[['','Month closed','available from 1 Nov'],['','Feed checked',''],['','Xero invoices drafted',''],['','Payout file ready',''],['','Nic authorises on FNB',''],['','Paid','']]}};
+function renderRun(m){const r=runs[m];document.getElementById('runMeta').textContent=r.meta;
+  document.getElementById('runSteps').innerHTML=r.steps.map((s,i)=>`<li class="step ${s[0]}" ${s[0]==='now'?'aria-current="step"':''}><i aria-hidden="true">${s[0]==='done'?'&#10003;':i+1}</i>${s[1]}<em>${s[2]||'&nbsp;'}</em></li>`).join('');
+  const st=document.getElementById('closeState');st.className='pill p-'+r.state[0];st.textContent=r.state[1];}
+function pickMonth(m){document.getElementById('closeBtn').textContent='Close '+m;document.getElementById('mTitle').textContent='Close '+m+'?';renderRun(m);
+  const closable=m==='September 2026'&&open===0;const b=document.getElementById('closeBtn');b.setAttribute('aria-disabled',closable?'false':'true');
+  const h=document.getElementById('closeHint');if(m==='August 2026')h.textContent='August is already closed. Use Reopen in the table below if a figure must change.';else if(m==='October 2026')h.textContent='October is still trading. The close becomes available on 1 November.';else setHint();
+  document.getElementById('checklist').hidden=(m!=='September 2026');}
+renderRun('September 2026');
 function openModal(id){const b=document.activeElement;if(b&&b.getAttribute('aria-disabled')==='true')return;lastFocus=b;
   const m=document.getElementById(id);m.classList.add('on');m.querySelector('.b-out').focus();}
 function closeModal(id){document.getElementById(id).classList.remove('on');if(lastFocus)lastFocus.focus();}
