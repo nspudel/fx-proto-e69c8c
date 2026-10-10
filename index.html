@@ -39,12 +39,18 @@
   .sidebar a,.sidebar button.navlink{display:flex;align-items:center;width:100%;text-align:left;padding:.75rem 1rem;color:#fff;text-decoration:none;cursor:pointer;background:transparent;border:0;font:inherit;line-height:1.5}
   .sidebar a:hover,.sidebar button.navlink:hover{background:var(--side-hover)}
   .sidebar .act{background:var(--side-act)}
-  .sidebar .new{box-shadow:inset 3px 0 0 var(--gold)}
   .sidebar svg.ic{width:1.09375rem;height:.875rem;margin:0 .5rem 0 0;color:#73818f;flex-shrink:0}
   .sidebar .act svg.ic,.sidebar a:hover svg.ic,.sidebar button.navlink:hover svg.ic{color:#fff}
-  .sidebar .chev{margin-left:auto;color:#73818f;font-size:.875rem;line-height:1}
-  .sidebar .nav-title{padding:.75rem 1rem;font-size:80%;font-weight:700;text-transform:uppercase;color:#e4e7ea;display:flex;align-items:center;gap:.5rem;line-height:1.5}
-  .sidebar .tag{font-size:.65625rem;line-height:1;background:var(--gold-btn);color:#fff;border-radius:10rem;padding:.25em .6em;font-weight:700;text-transform:none}
+  .sidebar .tag{font-size:.65625rem;line-height:1;background:var(--gold-btn);color:#fff;border-radius:10rem;padding:.25em .6em;font-weight:700;margin-left:.5rem;margin-right:16px}
+  .sidebar .nav-dropdown-toggle{position:relative}
+  .sidebar .nav-dropdown-toggle:after{content:"";position:absolute;top:50%;right:1rem;width:8px;height:8px;margin-top:-4px;background:url("data:image/svg+xml;charset=utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 11 14'%3E%3Cpath fill='%2373818f' d='M9.148 2.352l-4.148 4.148 4.148 4.148q0.148 0.148 0.148 0.352t-0.148 0.352l-1.297 1.297q-0.148 0.148-0.352 0.148t-0.352-0.148l-5.797-5.797q-0.148-0.148-0.148-0.352t0.148-0.352l5.797-5.797q0.148-0.148 0.352-0.148t0.352 0.148l1.297 1.297q0.148 0.148 0.148 0.352t-0.148 0.352z'/%3E%3C/svg%3E") no-repeat center/8px 8px;transition:transform .3s}
+  .sidebar .nav-dropdown-toggle:hover:after{filter:brightness(2)}
+  .sidebar .nav-dropdown-items{list-style:none;margin:0;padding:0;max-height:0;overflow:hidden;transition:max-height .3s ease-in-out}
+  .sidebar .nav-dropdown.open{background:rgba(0,0,0,.2)}
+  .sidebar .nav-dropdown.open>.nav-dropdown-items{max-height:1500px}
+  .sidebar .nav-dropdown.open>.nav-dropdown-toggle:after{transform:rotate(-90deg)}
+  .sidebar .nav-dropdown-items .navlink{padding-left:1.5rem}
+  .sidebar .lock-ic{margin:0 0 0 auto;width:.875rem;padding-left:.5rem;box-sizing:content-box}
   .sidebar-minimizer{height:50px;background:rgba(0,0,0,.2);display:flex;align-items:center;padding:0 1rem;color:#73818f;font-size:18px;flex-shrink:0}
   main{flex:1;min-width:0;padding:0 30px 1.5rem}
   /* breadcrumb */
@@ -201,19 +207,23 @@
     <li><a href="#"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>Orders</a></li>
     <li><a href="#"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>Shipments</a></li>
     <li><a href="#"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>Carts</a></li>
-    <li><a href="#"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z"/></svg>Catalogue<span class="chev" aria-hidden="true">&#8250;</span></a></li>
+    <li class="nav-dropdown"><a href="#" class="nav-dropdown-toggle" aria-expanded="false"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z"/></svg>Catalogue</a></li>
     <li><a href="#"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/></svg>Vouchers</a></li>
-    <li><a href="#"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>Articles<span class="chev" aria-hidden="true">&#8250;</span></a></li>
+    <li class="nav-dropdown"><a href="#" class="nav-dropdown-toggle" aria-expanded="false"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>Articles</a></li>
     <li><a href="#"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>Reports</a></li>
-    <li class="nav-title">Finance <span class="tag">new</span></li>
-    <li><button class="navlink new act" type="button" data-v="close" aria-current="page"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/><polyline points="9 16 11 18 15 14"/></svg>Month Close</button></li>
-    <li><button class="navlink new" type="button" data-v="fin"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21.21 15.89A10 10 0 1 1 8 2.83"/><path d="M22 12A10 10 0 0 0 12 2v10z"/></svg>Financials<svg class="ic" style="margin-left:auto" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-label="restricted" role="img"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></button></li>
-    <li><a href="#"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/></svg>Shops<span class="chev" aria-hidden="true">&#8250;</span></a></li>
+    <li class="nav-dropdown open" id="finGroup">
+      <button class="navlink nav-dropdown-toggle" type="button" aria-expanded="true" aria-controls="finItems" onclick="toggleGroup(this)"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>Finance<span class="tag">new</span></button>
+      <ul class="nav-dropdown-items" id="finItems">
+        <li><button class="navlink act" type="button" data-v="close" aria-current="page"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/><polyline points="9 16 11 18 15 14"/></svg>Month Close</button></li>
+        <li><button class="navlink" type="button" data-v="fin"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21.21 15.89A10 10 0 1 1 8 2.83"/><path d="M22 12A10 10 0 0 0 12 2v10z"/></svg>Financials<svg class="ic lock-ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-label="restricted" role="img"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></button></li>
+      </ul>
+    </li>
+    <li class="nav-dropdown"><a href="#" class="nav-dropdown-toggle" aria-expanded="false"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/></svg>Shops</a></li>
     <li><a href="#"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="3" width="15" height="13"/><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg>Vendors</a></li>
     <li><a href="#"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 4h8a4 4 0 0 1 4 4 4 4 0 0 1-4 4H6z"/><path d="M6 12h9a4 4 0 0 1 4 4 4 4 0 0 1-4 4H6z"/></svg>Brands</a></li>
     <li><a href="#"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>Accounts</a></li>
     <li><a href="#"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>Users</a></li>
-    <li><a href="#"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="21" x2="4" y2="14"/><line x1="4" y1="10" x2="4" y2="3"/><line x1="12" y1="21" x2="12" y2="12"/><line x1="12" y1="8" x2="12" y2="3"/><line x1="20" y1="21" x2="20" y2="16"/><line x1="20" y1="12" x2="20" y2="3"/><line x1="1" y1="14" x2="7" y2="14"/><line x1="9" y1="8" x2="15" y2="8"/><line x1="17" y1="16" x2="23" y2="16"/></svg>Settings<span class="chev" aria-hidden="true">&#8250;</span></a></li>
+    <li class="nav-dropdown"><a href="#" class="nav-dropdown-toggle" aria-expanded="false"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="21" x2="4" y2="14"/><line x1="4" y1="10" x2="4" y2="3"/><line x1="12" y1="21" x2="12" y2="12"/><line x1="12" y1="8" x2="12" y2="3"/><line x1="20" y1="21" x2="20" y2="16"/><line x1="20" y1="12" x2="20" y2="3"/><line x1="1" y1="14" x2="7" y2="14"/><line x1="9" y1="8" x2="15" y2="8"/><line x1="17" y1="16" x2="23" y2="16"/></svg>Settings</a></li>
   </ul>
   </nav>
   <div class="sidebar-minimizer" aria-hidden="true">&#8249;</div>
@@ -379,6 +389,7 @@
 // sidebar drawer (narrow screens)
 function toggleSide(force){const on=force===undefined?!document.body.classList.contains('sidebar-show'):force;
   document.body.classList.toggle('sidebar-show',on);document.querySelector('.toggler').setAttribute('aria-expanded',on);}
+function toggleGroup(b){const g=b.parentElement,on=!g.classList.contains('open');g.classList.toggle('open',on);b.setAttribute('aria-expanded',on);}
 // navigation between the two prototype pages
 document.querySelectorAll('.sidebar button[data-v]').forEach(b=>b.onclick=()=>{
   document.querySelectorAll('.sidebar .act').forEach(x=>{x.classList.remove('act');x.removeAttribute('aria-current')});
