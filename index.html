@@ -567,13 +567,13 @@
       
       <h3>Your segments</h3>
       <div class="tbl" tabindex="0" role="region" aria-label="Campaign Monitor segments"><table class="compact kpi-t" id="t-segs"><thead><tr><th scope="col">Segment</th><th scope="col" class="n">Subscribers</th><th scope="col" class="n">Share of master list</th><th scope="col" class="n">Open rate</th><th scope="col" class="n">Click rate</th><th scope="col" class="n">Orders from clicks</th></tr></thead><tbody id="segRows"></tbody></table></div>
-      <p class="tagnote">Sizes are live from Campaign Monitor (12 Oct 2026). Per-segment open, click and orders need the Campaign Monitor API key and the join to the Orders feed; the columns are in place and fill as soon as the key is issued. Click a segment to drill down in the live version.</p>
+      <p class="tagnote">Sizes are live from Campaign Monitor (12 Oct 2026). API access is live (13 Oct 2026). Per-segment open and click rates need the recipient-level join (campaign recipients against segment membership), which runs in the nightly pull once built; orders per segment need the Orders feed (PIV-516). Click a segment to drill down in the live version.</p>
       <h3>Sponsored emails by tag</h3>
       <div class="tbl" tabindex="0" role="region" aria-label="Sponsored emails by campaign tag"><table class="compact kpi-t" id="t-tags"><thead><tr><th scope="col">Tag</th><th scope="col" class="n">Campaigns</th><th scope="col" class="n">Emails sent</th><th scope="col" class="n">Open rate</th><th scope="col" class="n">Click rate</th><th scope="col" class="n">Clicks to site</th><th scope="col" class="n">Orders attributed</th></tr></thead><tbody>
       <tr><td>sponsored (all brands)</td><td class="n" colspan="6"><span class="dim">no tagged campaigns yet</span></td></tr>
       <tr><td>brand:&lt;vendor&gt;</td><td class="n" colspan="6"><span class="dim">one row per brand, from the same tags</span></td></tr>
       </tbody></table></div>
-      <p class="tagnote">Tag each sponsored campaign in Campaign Monitor with <code>sponsored</code> and <code>brand:&lt;vendor name&gt;</code>. This table then shows the collective view, one row per brand, with a per-campaign drill-down and a vendor-ready export. Tags are read through the campaigns endpoint of the API, so this needs the same key as the segments; tags applied from now on are picked up retrospectively.</p>
+      <p class="tagnote">Tag each sponsored campaign in Campaign Monitor with <code>sponsored</code> and <code>brand:&lt;vendor name&gt;</code>. This table then shows the collective view, one row per brand, with a per-campaign drill-down and a vendor-ready export. Tags are read through the campaigns endpoint of the API (live since 13 Oct 2026): none of the 350 campaigns sent since March 2026 carries a tag yet, so the table fills as soon as tagging starts; tags added to past campaigns are picked up too.</p>
       <h3>Campaign performance by month</h3>
       <div class="tbl" tabindex="0" role="region" aria-label="Campaign performance by month"><table class="compact kpi-t" id="t-cm"></table></div>
       <div class="ai" id="ai-nl"></div>
@@ -841,7 +841,7 @@ document.getElementById('nlkpis').innerHTML=
 
 
 (()=>{const c=G.cmlive,T=c.master,rows=[['Active (opened or clicked, 30 days)',seg.Active],['Engaged (30 to 90 days)',seg.Engaged],['High Value',c.high_value],['VIP',c.vip],['Customers',c.customers],['P2Pass (Priority Pass list)',c.priority],['P2P Database',c.p2p_db],['NGF Database',c.ngf_db],['P2P warm non-buyers',c.warm_p2p],['NGF warm non-buyers',c.warm_ngf],['Suppressed (0 orders, 180d+ inactive)',c.suppress]];
-document.getElementById('segRows').innerHTML=rows.map(r=>`<tr><td>${r[0]}</td><td class="n">${fmtN(r[1])}</td><td class="n">${pct(r[1]/T,0)}</td><td class="n"><span class="dim">with API key</span></td><td class="n"><span class="dim">with API key</span></td><td class="n"><span class="dim">with API key</span></td></tr>`).join('');})();
+document.getElementById('segRows').innerHTML=rows.map(r=>`<tr><td>${r[0]}</td><td class="n">${fmtN(r[1])}</td><td class="n">${pct(r[1]/T,0)}</td><td class="n"><span class="dim">nightly join</span></td><td class="n"><span class="dim">nightly join</span></td><td class="n"><span class="dim">PIV-516</span></td></tr>`).join('');})();
 // commentary
 const ai=(id,body)=>document.getElementById(id).innerHTML=`<div class="ai-h"><span class="ai-tag">Hermes</span><b>Commentary</b><span class="meta">Generated 12 Oct 2026 from the figures above. Regenerated after each month close; nothing here is typed by hand.</span></div>${body}`;
 const coreYtd27=sum('gmv',12,19)-sum('own',12,19),coreYtd26=sum('gmv',0,7)-sum('ngf',0,7)-sum('own',0,7);
