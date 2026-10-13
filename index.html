@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="robots" content="noindex, nofollow">
-<title>Port2Port CMS: Finance prototype v0.9</title>
+<title>Port2Port CMS: Finance prototype v1.0</title>
 <style>
   /* Values taken from the live CMS stylesheet (CoreUI 2 / Bootstrap 4.3): 1rem = 14px? No: root is 16px, body .875rem = 14px. */
   :root{--side:#2f353a;--side-act:#3a4248;--side-hover:#20a8d8;--bg:#f7f7f7;--ink:#23282c;--muted:#5c6873;--input:#5c6873;--line:#c8ced3;--input-line:#e4e7ea;--hdr:#ebeaea;
@@ -277,10 +277,13 @@
   .kpi-btn{border:0;font:inherit;text-align:left;cursor:pointer;color:inherit}.kpi-btn:hover{filter:brightness(.97)}.kpi-btn:focus-visible{outline:2px solid var(--focus);outline-offset:2px}
   #checklist.flash .exc:not(.okk){animation:excflash 1.2s ease-out 2}@keyframes excflash{0%,100%{background:transparent}50%{background:#fbe9c9}}
   .exc .where{display:block;font-size:11px;color:#5c6873;margin-top:2px}
+
+  .exc .later{display:inline-block;font-size:11px;color:#3b5a40;background:#D9E8DC;border-radius:3px;padding:0 6px;margin-top:4px}
+  .ship td:first-child{white-space:normal}.ship small{display:block;color:#5c6873;font-size:11px}
 </style>
 </head>
 <body>
-<aside class="proto" aria-label="Prototype notice">PROTOTYPE v0.9 (10 Oct 2026). Real figures as at 10 Oct 2026, computed from the CMS order records, Xero, Campaign Monitor and Google Analytics; a snapshot, not a live connection.</aside>
+<aside class="proto" aria-label="Prototype notice">PROTOTYPE v1.0 (10 Oct 2026). Real figures as at 10 Oct 2026, computed from the CMS order records, Xero, Campaign Monitor and Google Analytics; a snapshot, not a live connection.</aside>
 
 <header class="app-header">
   <button class="toggler" type="button" aria-label="Open menu" aria-controls="sidebar" aria-expanded="false" onclick="toggleSide()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg></button>
@@ -343,9 +346,10 @@
         <div style="flex:1.4 1 300px;min-width:0">
           <h2>Before you close (all items must be clear)</h2>
           <div id="checklist">
-          <div class="exc" id="e1" role="group" aria-label="Open item 1"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg><span class="t"><b>3 orders</b> still on Payment Pending or Processing<span class="where">Opens the Orders list filtered to September, status Payment Pending or Processing (URL filters: PIV-547)</span></span><button class="link-btn" type="button" onclick="fix('e1')">Review orders &rarr;</button></div>
-          <div class="exc" id="e2" role="group" aria-label="Open item 2"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg><span class="t"><b>5 shipments</b> with vendor share of R1,500 or more and no courier cost entered<span class="where">Opens the Shipments list filtered to September, courier cost empty, vendor share R1,500 or more</span></span><button class="link-btn" type="button" onclick="fix('e2')">Enter costs &rarr;</button></div>
+          <div class="exc" id="e1" role="group" aria-label="Open item 1"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg><span class="t"><b>3 orders</b> still on Payment Pending or Processing: confirm the payment or cancel the order<span class="where">Opens the Orders list filtered to September, status Payment Pending or Processing (URL filters: PIV-547). The close stays locked until each one is paid or cancelled, so an order always belongs to the month it was placed in.</span><span class="later">Automatic later: EFT payments matched from the FNB feed</span></span><button class="link-btn" type="button" onclick="fix('e1')">Review orders &rarr;</button></div>
+          <div class="exc" id="e2" role="group" aria-label="Open item 2"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg><span class="t"><b>5 shipments</b> sent by Port2Port, vendor share R1,500 or more, without the final Aramex cost<span class="where">Opens the Shipments list filtered to September, shipped by Port2Port, vendor share R1,500 or more, courier cost empty. Enter the cost after Aramex has reweighed the parcel, not the booking estimate.</span><span class="later">Automatic later: final cost read from Aramex per waybill once delivered</span></span><button class="link-btn" type="button" onclick="fix('e2')">Enter costs &rarr;</button></div>
           <div class="exc okk"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg><span class="t">All EFT payments captured (296 orders)</span></div>
+          <div class="exc okk"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg><span class="t">Delivery fees for vendors who ship themselves match each vendor&rsquo;s profile (148 lines, 20 vendors, R 4,608 to pass on)<span class="where">Checked against Does Own Shipping, Free Shipping Limit and Delivery Fee on the vendor&rsquo;s CMS profile</span></span></div>
           <div class="exc okk"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg><span class="t">Vendor bank details verified for 89 of 89 vendors with sales</span></div>
           <p class="note" style="margin:.25rem 0 1rem">Checked 10 Oct 2026, 10:42. <button class="link-btn" type="button" onclick="recheck()">Check again</button></p>
           </div>
@@ -367,6 +371,20 @@
           </table>
         </div>
       </div>
+      <h2 style="margin-top:1.25rem">Shipping this month</h2>
+      <div class="tbl">
+      <table class="ship">
+        <thead><tr><th scope="col">Who ships</th><th scope="col" class="n">Vendor shares</th><th scope="col" class="n">Sales (R, incl VAT)</th><th scope="col">What happens to the shipping money</th><th scope="col" class="n">Amount (R)</th></tr></thead>
+        <tbody>
+        <tr><td>Vendor ships itself<small>20 vendors; free above their own limit (R1,500 to R3,000)</small></td><td class="n">148</td><td class="n">479,669</td><td>Delivery fee the customer paid is added to the vendor&rsquo;s payout<small>38 shares paid a fee; 110 were above the vendor&rsquo;s free shipping limit</small></td><td class="n">4,608</td></tr>
+        <tr><td>Port2Port ships, vendor share R1,500 or more<small>free for the customer</small></td><td class="n">182</td><td class="n">597,877</td><td>Final Aramex cost charged back to the vendor<small>excl VAT, deducted from the payout</small></td><td class="n">25,597</td></tr>
+        <tr><td>Port2Port ships, vendor share under R1,500<small>customer pays R99</small></td><td class="n">100</td><td class="n">85,282</td><td>R50 handling fee charged to the vendor<small>excl VAT, deducted from the payout; customers paid R 9,900 in delivery</small></td><td class="n">5,000</td></tr>
+        <tr><td>Own stock<small>Port2Port sells its own wine</small></td><td class="n">32</td><td class="n">147,264</td><td>No vendor to charge or pay</td><td class="n">&ndash;</td></tr>
+        <tr class="tot"><td>Total</td><td class="n">462</td><td class="n">1,310,092</td><td></td><td class="n"></td></tr>
+        </tbody>
+      </table>
+      </div>
+      <p class="note">The R1,500 threshold applies to each vendor&rsquo;s share of an order, not the order total. Open question: shipping charges come off payouts excluding VAT today; if VAT is added, vendors pay R 4,590 more for September (feed spec section 3).</p>
     </div>
   </div>
 
@@ -619,7 +637,7 @@
 <div class="modal" id="modal" role="dialog" aria-modal="true" aria-labelledby="mTitle" aria-describedby="mDesc"><div class="modal-content">
   <div class="modal-header"><h2 id="mTitle">Close September 2026?</h2></div>
   <div class="modal-body">
-    <p id="mDesc">This locks September sales and starts the run: feed check, Xero draft invoices, payout file. Nic is then asked to authorise payment on FNB. Reopening later needs a reason and is logged.</p>
+    <p id="mDesc">This stamps the 296 September orders with finance month September 2026 and starts the run: fees check, Xero draft invoices, payout file. The orders stay in September even if a waybill or refund changes them later. Nic is then asked to authorise payment on FNB. Reopening later needs a reason and is logged.</p>
     <table class="compact"><tbody><tr><td>Orders</td><td class="n">296</td></tr><tr><td>GMV (incl VAT)</td><td class="n">R 1,310,092.00</td></tr><tr><td>Vendors to pay</td><td class="n">89</td></tr><tr><td>Estimated payout total</td><td class="n">R 862,367.57</td></tr></tbody></table>
     <p class="note" style="margin:0">Recorded as: Reeva, 10 Oct 2026, 10:42.</p>
   </div>
@@ -630,7 +648,7 @@
 <div class="modal" id="reopen" role="dialog" aria-modal="true" aria-labelledby="rTitle"><div class="modal-content">
   <div class="modal-header"><h2 id="rTitle">Reopen August 2026?</h2></div>
   <div class="modal-body">
-    <p>August is closed and its figures were sent to Xero (82 draft invoices) and to the payout file. Hermes flags every figure that changes after reopening. A reason is required and is logged with your name.</p>
+    <p>August is closed and its figures were sent to Xero (82 draft invoices) and to the payout file. Hermes lists every order stamped August 2026 that has changed since the close, and every figure that changes after reopening. A reason is required and is logged with your name.</p>
     <label for="rReason">Reason for reopening</label>
     <textarea id="rReason" placeholder="For example: late EFT captured for order KL78621" aria-required="true"></textarea>
     <p class="note" id="rErr" role="alert" style="color:var(--bad);display:none">Please give a reason.</p>
@@ -670,11 +688,11 @@ function recheck(){document.querySelector('#checklist .note').firstChild.textCon
 // eight-step close journey. who: r=Reeva, h=Hermes (automatic), n=Nic
 const STEPS=[
  ['Close the month','r','Once the checks above are clear, press Close. Nothing else starts before this.'],
- ['Fees checked','h','Commission and shipping charges for every vendor, checked against the CMS orders. Mismatches come back to you here.'],
+ ['Fees checked','h','Three checks per vendor: commission; Port2Port shipping charged back (R50 handling fee under R1,500, Aramex cost from R1,500); delivery fees passed on to vendors who ship themselves. Mismatches come back to you here.'],
  ['Xero invoices created','h','One commission invoice and one shipping invoice per vendor, as drafts. Nic approves them in Xero.'],
  ['Invoices put on the CMS','h','The PDFs are uploaded to Accounts, Marketplace Invoices, where vendors download them.'],
  ['Vendor emails sent','r','Press Send: every vendor gets the monthly snapshot with their sales, fees and invoices.'],
- ['Payout file ready','h','Built only after the emails have gone out. You check the total against the month at a glance.'],
+ ['Payout file ready','h','Built only after the emails have gone out. Per vendor: sales, plus delivery fees if they ship themselves, minus commission and shipping charges. You check the total against the month at a glance.'],
  ['Nic authorises on FNB','n','Nic loads and releases the payment batch. Nothing moves before this.'],
  ['Marked as paid','n','At month end Nic runs the paid file; Xero and the CMS are updated and the month is finished.']];
 const runs={
