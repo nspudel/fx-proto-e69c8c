@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="robots" content="noindex, nofollow">
-<title>Port2Port CMS: Finance prototype v0.8</title>
+<title>Port2Port CMS: Finance prototype v0.9</title>
 <style>
   /* Values taken from the live CMS stylesheet (CoreUI 2 / Bootstrap 4.3): 1rem = 14px? No: root is 16px, body .875rem = 14px. */
   :root{--side:#2f353a;--side-act:#3a4248;--side-hover:#20a8d8;--bg:#f7f7f7;--ink:#23282c;--muted:#5c6873;--input:#5c6873;--line:#c8ced3;--input-line:#e4e7ea;--hdr:#ebeaea;
@@ -273,10 +273,14 @@
   #t-newv td:first-child,#t-keptv td:first-child{white-space:nowrap}#t-prod td .dim,#t-lostb td,#t-retp td{font-size:12px}
   #acc-p6 .g2>div{min-width:0}
   .pend{display:inline-block;border-radius:999px;padding:2px 10px;font-size:11px;font-weight:600;background:#eef0f2;color:#5c6873}
+
+  .kpi-btn{border:0;font:inherit;text-align:left;cursor:pointer;color:inherit}.kpi-btn:hover{filter:brightness(.97)}.kpi-btn:focus-visible{outline:2px solid var(--focus);outline-offset:2px}
+  #checklist.flash .exc:not(.okk){animation:excflash 1.2s ease-out 2}@keyframes excflash{0%,100%{background:transparent}50%{background:#fbe9c9}}
+  .exc .where{display:block;font-size:11px;color:#5c6873;margin-top:2px}
 </style>
 </head>
 <body>
-<aside class="proto" aria-label="Prototype notice">PROTOTYPE v0.8 (10 Oct 2026). Real figures as at 10 Oct 2026, computed from the CMS order records, Xero, Campaign Monitor and Google Analytics; a snapshot, not a live connection.</aside>
+<aside class="proto" aria-label="Prototype notice">PROTOTYPE v0.9 (10 Oct 2026). Real figures as at 10 Oct 2026, computed from the CMS order records, Xero, Campaign Monitor and Google Analytics; a snapshot, not a live connection.</aside>
 
 <header class="app-header">
   <button class="toggler" type="button" aria-label="Open menu" aria-controls="sidebar" aria-expanded="false" onclick="toggleSide()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg></button>
@@ -339,8 +343,8 @@
         <div style="flex:1.4 1 300px;min-width:0">
           <h2>Before you close (all items must be clear)</h2>
           <div id="checklist">
-          <div class="exc" id="e1" role="group" aria-label="Open item 1"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg><span class="t"><b>3 orders</b> still on Payment Pending or Processing</span><button class="link-btn" type="button" onclick="fix('e1')">Review orders &rarr;</button></div>
-          <div class="exc" id="e2" role="group" aria-label="Open item 2"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg><span class="t"><b>5 shipments</b> with vendor share of R1,500 or more and no courier cost entered</span><button class="link-btn" type="button" onclick="fix('e2')">Enter costs &rarr;</button></div>
+          <div class="exc" id="e1" role="group" aria-label="Open item 1"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg><span class="t"><b>3 orders</b> still on Payment Pending or Processing<span class="where">Opens the Orders list filtered to September, status Payment Pending or Processing (URL filters: PIV-547)</span></span><button class="link-btn" type="button" onclick="fix('e1')">Review orders &rarr;</button></div>
+          <div class="exc" id="e2" role="group" aria-label="Open item 2"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg><span class="t"><b>5 shipments</b> with vendor share of R1,500 or more and no courier cost entered<span class="where">Opens the Shipments list filtered to September, courier cost empty, vendor share R1,500 or more</span></span><button class="link-btn" type="button" onclick="fix('e2')">Enter costs &rarr;</button></div>
           <div class="exc okk"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg><span class="t">All EFT payments captured (296 orders)</span></div>
           <div class="exc okk"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg><span class="t">Vendor bank details verified for 89 of 89 vendors with sales</span></div>
           <p class="note" style="margin:.25rem 0 1rem">Checked 10 Oct 2026, 10:42. <button class="link-btn" type="button" onclick="recheck()">Check again</button></p>
@@ -385,7 +389,7 @@
         <div class="kpi rag-g"><b>296</b><span class="l">Orders</span><small>&#9650; 91 on Aug</small></div>
         <div class="kpi rag-g"><b>89</b><span class="l">Vendors paid</span><small>Aug: 82</small></div>
         <div class="kpi rag-g"><b>R 238,671</b><span class="l">Commission</span><small>20.5% of third-party sales</small></div>
-        <div class="kpi rag-a"><b>2</b><span class="l">Exceptions</span><small>Aug: 3</small></div>
+        <button type="button" class="kpi rag-a kpi-btn" id="excTile" onclick="goChecklist()" aria-describedby="excHint"><b id="excN">2</b><span class="l">Exceptions to clear</span><small id="excS">Aug closed with 3. Click to see them</small></button><span class="sr-only" id="excHint">Scrolls to the open items in Before you close</span>
 <p class="legend ragkey" style="flex-basis:100%"><i style="background:#D9E8DC"></i>Good or on track <i style="background:#DDA64C"></i>Needs attention <i style="background:#C45C55"></i>Concerning</p>      </div>
       <div class="tbl">
       <table>
@@ -652,7 +656,12 @@ document.querySelectorAll('a[href="#"]').forEach(a=>a.addEventListener('click',e
 // month close
 let open=2,lastFocus=null;
 function fix(id){const e=document.getElementById(id);e.classList.add('okk');e.querySelector('button').remove();
-  e.querySelector('svg').innerHTML='<polyline points="20 6 9 17 4 12"/>';e.querySelector('.t').innerHTML+=' : resolved';open--;setHint();}
+  e.querySelector('svg').innerHTML='<polyline points="20 6 9 17 4 12"/>';e.querySelector('.t').innerHTML+=' : resolved';open--;setHint();setExc();}
+function setExc(){const t=document.getElementById('excTile'),n=document.getElementById('excN'),s=document.getElementById('excS');if(!t)return;n.textContent=open;
+  t.classList.remove('rag-a','rag-g','rag-r');t.classList.add(open===0?'rag-g':open<=2?'rag-a':'rag-r');
+  s.textContent=open===0?'All clear. Aug closed with 3':'Aug closed with 3. Click to see '+(open===1?'it':'them');}
+function goChecklist(){const c=document.getElementById('checklist');c.scrollIntoView({behavior:'smooth',block:'start'});c.classList.remove('flash');void c.offsetWidth;c.classList.add('flash');
+  const f=c.querySelector('.exc:not(.okk) button')||document.getElementById('closeBtn');setTimeout(()=>f.focus({preventScroll:true}),500);}
 function setHint(){const b=document.getElementById('closeBtn'),h=document.getElementById('closeHint');
   if(open===0){b.setAttribute('aria-disabled','false');h.textContent='All checks clear. Closing asks you to confirm first.';}
   else h.textContent='Clear the '+open+' open item'+(open>1?'s':'')+' above to enable the close.';}
